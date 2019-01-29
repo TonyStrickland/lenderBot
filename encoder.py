@@ -33,7 +33,5 @@ encryptedFileName = (('{0}.encrypted').format(keyName))
 
 encodedTokenFile = open(encryptedFileName,'wb')
 
-encrypted = encrypted.decode()
-
 encodedTokenFile.write(encrypted)
 encodedTokenFile.close()
