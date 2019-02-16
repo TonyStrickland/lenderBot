@@ -4,7 +4,7 @@ import time
 import datetime
 import random
 import schedule
-import mysql.connector
+# import mysql.connector
 import base64
 import os
 import cryptography
@@ -30,7 +30,6 @@ Winchell World began development Jan 22, 2019
 
 #  You will need to have acces to the slack token and
 #  create a key file and token pair with the encoder.py
-#  .key files should be added to .gitignore
 
 ##########################################################
 
