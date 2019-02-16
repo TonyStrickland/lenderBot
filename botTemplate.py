@@ -3,11 +3,12 @@ from sqlite3 import Error
 import time
 import datetime
 import random
-import schedule
+# import schedule
 # import mysql.connector
 import base64
 import os
 import cryptography
+import slackclient
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
@@ -15,7 +16,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from datetime import datetime
-from slackclient import SlackClient
+# from slackclient import SlackClient
 
 # SQLite3 syntax to connect to database
 # 
@@ -31,21 +32,21 @@ from slackclient import SlackClient
 #                                                        #
 ##########################################################
 
-keyFile = open('path/to/.key', 'rb')
-key = keyFile.read()
-keyFile.close()
+# keyFile = open('path/to/.key', 'rb')
+# key = keyFile.read()
+# keyFile.close()
 
-f = Fernet(key)
+# f = Fernet(key)
 
-encryptedTokenFile = open('path/to/encrypted/.token', 'rb')
-encryptedToken = encryptedTokenFile.read()
+# encryptedTokenFile = open('path/to/encrypted/.token', 'rb')
+# encryptedToken = encryptedTokenFile.read()
 
-decryptedToken = f.decrypt(encryptedToken)
+# decryptedToken = f.decrypt(encryptedToken)
 
-SLACK_BOT_TOKEN = decryptedToken.decode()
+SLACK_BOT_TOKEN = "xoxb-323434273830-530815171060-CWuVt1jCJ842s5hbTZsP41o5"
 
 # instantiate Slack client
-slack_client = SlackClient(SLACK_BOT_TOKEN)
+slack_client = slackclient(SLACK_BOT_TOKEN)
 # starterbot's user ID in Slack: value is assigned after the bot starts up
 templateID = None
 

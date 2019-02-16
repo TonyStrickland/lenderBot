@@ -15,7 +15,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 key = Fernet.generate_key()
 
-keyName = raw_input("Enter the name of the key file:\n")
+keyName = input("Enter the name of the key file:\n")
 
 keyFileName =  (('{0}.key').format(keyName))
 
@@ -23,7 +23,7 @@ keyFile = open(keyFileName, 'wb')
 keyFile.write(key)
 keyFile.close()
 
-token = raw_input("Paste slack token:\n")
+token = input("Paste slack token:\n")
 
 message = token.encode()
 f = Fernet(key)
