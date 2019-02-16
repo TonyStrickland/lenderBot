@@ -31,13 +31,13 @@ from slackclient import SlackClient
 #                                                        #
 ##########################################################
 
-keyFile = open('path/to/key', 'rb')
+keyFile = open('path/to/.key', 'rb')
 key = keyFile.read()
 keyFile.close()
 
 f = Fernet(key)
 
-encryptedTokenFile = open('path/to/encrypted/token', 'rb')
+encryptedTokenFile = open('path/to/encrypted/.token', 'rb')
 encryptedToken = encryptedTokenFile.read()
 
 decryptedToken = f.decrypt(encryptedToken)
@@ -54,12 +54,12 @@ RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
 
 def parseSlackInput(aText):
 	if aText and len(aText) > 0:
-		item = aText[0]
+		item = aText[0] # gets first (only) item
 		if 'text' in item:
-			msg = item['text'].strip(' ')
-			chn = item['channel']
-			usr = item['user']
-			stp = item['ts']
+			msg = item['text'].strip(' ') # text of the message
+			chn = item['channel'] # ID of the channel
+			usr = item['user'] # ID of the user
+			stp = item['ts'] # Timestamp at which message was posted
 			return [str(msg),str(chn),str(usr),str(stp)]
 		else:
 			return [None,None,None,None]
@@ -93,13 +93,11 @@ def directResponse(someUser,text):
 	return
 
 def handle_command(command, channel,aUser,tStamp):
-	"""
-		Executes bot command if the command is known
-	"""
+	
 	command = command.lower()
 	response = None
-	
-	# This is where you start to implement commands
+
+	# This is where you implement commands
 
 	if command == "!history":
 		directResponse(aUser,response)
