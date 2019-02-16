@@ -45,7 +45,7 @@ decryptedToken = f.decrypt(encryptedToken)
 SLACK_BOT_TOKEN = decryptedToken.decode()
 
 # instantiate Slack client
-slack_client = SlackClient(SLACK_BOT_TOKEN)  # HOWTO: instantiate client on python3
+slack_client = SlackClient(SLACK_BOT_TOKEN)
 # starterbot's user ID in Slack: value is assigned after the bot starts up
 templateID = None
 
