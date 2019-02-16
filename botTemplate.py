@@ -17,10 +17,6 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from datetime import datetime
 from slackclient import SlackClient
 
-"""
-Winchell World began development Jan 22, 2019
-"""
-
 # SQLite3 syntax to connect to database
 # 
 # conn = sqlite3.connect('SOME DATABASE')
@@ -102,16 +98,32 @@ def handle_command(command, channel,aUser,tStamp):
 	"""
 	command = command.lower()
 	response = None
-		# This is where you start to implement more commands!
-	if command.startswith("!help"):
-		response = """WORDS
-				"""
-		threadedResponse(channel,response,tStamp)
+	
+	# This is where you start to implement commands
+
+	if command == "!history":
+		directResponse(aUser,response)
 		return
+    
+	if command.startswith("!test"):
+		response = (("""Text:{0}
+				Channel:{1}
+				TS:{2}
+				User:{3}
+				""").format(command,channel,tStamp,aUser))
+		inChannelResponse(channel,response)
+		return
+
+	# ADMIN command
+	if command == "!farewell":
+		if aUser == "SPECIFY ID":
+			inChannelResponse(channel,"I'm an admin!")
+		return
+	return
 
 if __name__ == "__main__":
 	if slack_client.rtm_connect(with_team_state=False):
-		print("WinchellDM is running!")
+		print("Slackbot is running!")
 		# Read bot's user ID by calling Web API method `auth.test`
 		templateID = slack_client.api_call("auth.test")["user_id"]
 		while True:
