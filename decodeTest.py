@@ -1,3 +1,9 @@
+#############################################################
+#                                                           #
+#   Use this to test if your  string was encoded correctly  #
+#                                                           #
+#############################################################
+
 import base64
 import os
 import cryptography

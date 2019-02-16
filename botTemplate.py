@@ -27,10 +27,12 @@ Winchell World began development Jan 22, 2019
 # serverCursor = conn.cursor() 
 
 ##########################################################
-
-#  You will need to have acces to the slack token and
-#  create a key file and token pair with the encoder.py
-
+#                                                        #
+#  You will need to have access to the slack token and   #
+#  create a key file and token pair with encoder.py      #
+# .key files have been added to gitignore and            #
+# should never be published                              #
+#                                                        #
 ##########################################################
 
 keyFile = open('path/to/key', 'rb')
