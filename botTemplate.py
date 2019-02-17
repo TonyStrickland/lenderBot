@@ -24,9 +24,9 @@ from slackclient import SlackClient
 
 ##########################################################
 #                                                        #
-#  You will need to have access to the slack token and   #
-#  create a key file and token pair with encoder.py      #
-# .key files have been added to gitignore and            #
+#  You should encode the slack token with encoder.py     #
+#  It will create an encrypted token and a key to decode #
+# .key files have been added to .gitignore and           #
 # should never be published                              #
 #                                                        #
 ##########################################################
