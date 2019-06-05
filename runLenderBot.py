@@ -1,16 +1,12 @@
+import decode as de
+import lendingLibraryAdapter as adapter
+
 import sqlite3
 from sqlite3 import Error
 import time
 import datetime
 import random
-import base64
 import os
-import cryptography
-
-from cryptography.fernet import Fernet
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from datetime import datetime
 from slackclient import SlackClient
@@ -20,31 +16,10 @@ from slackclient import SlackClient
 # conn = sqlite3.connect('SOME DATABASE')
 # serverCursor = conn.cursor() 
 
-##########################################################
-#                                                        #
-#  You should encode the slack token with encoder.py     #
-#  It will create an encrypted token and a key to decode #
-# .key files have been added to .gitignore and           #
-# should never be published                              #
-#                                                        #
-##########################################################
+de.MAIN_KEY = "lenderBot"
+slack_client = SlackClient(de.getToken())
 
-keyFile = open('lenderBot.key', 'rb')
-key = keyFile.read()
-keyFile.close()
-
-f = Fernet(key)
-
-encryptedTokenFile = open('lenderBot.encrypted', 'rb')
-encryptedToken = encryptedTokenFile.read()
-
-decryptedToken = f.decrypt(encryptedToken)
-
-SLACK_BOT_TOKEN = decryptedToken.decode()
-
-# instantiate Slack client
-slack_client = SlackClient(SLACK_BOT_TOKEN)
-# starterbot's user ID in Slack: value is assigned after the bot starts up
+# lenderbot's user ID in Slack: value is assigned after the bot starts up
 templateID = None
 
 # constants
