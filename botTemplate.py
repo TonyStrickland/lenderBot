@@ -3,8 +3,6 @@ from sqlite3 import Error
 import time
 import datetime
 import random
-# import schedule
-# import mysql.connector
 import base64
 import os
 import cryptography
@@ -31,13 +29,13 @@ from slackclient import SlackClient
 #                                                        #
 ##########################################################
 
-keyFile = open('path/to/.key', 'rb')
+keyFile = open('lenderBot.key', 'rb')
 key = keyFile.read()
 keyFile.close()
 
 f = Fernet(key)
 
-encryptedTokenFile = open('path/to/.encrypted', 'rb')
+encryptedTokenFile = open('lenderBot.encrypted', 'rb')
 encryptedToken = encryptedTokenFile.read()
 
 decryptedToken = f.decrypt(encryptedToken)
@@ -121,7 +119,7 @@ def handle_command(command, channel,aUser,tStamp):
 
 if __name__ == "__main__":
 	if slack_client.rtm_connect(with_team_state=False):
-		print("Slackbot is running!")
+		print("Lenderbot is running!")
 		# Read bot's user ID by calling Web API method `auth.test`
 		templateID = slack_client.api_call("auth.test")["user_id"]
 		while True:
@@ -134,5 +132,4 @@ if __name__ == "__main__":
                 
 		time.sleep(RTM_READ_DELAY)
 	else:
-		pass
 		print("Connection failed. Exception traceback printed above.")
