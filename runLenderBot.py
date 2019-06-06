@@ -11,11 +11,6 @@ import os
 from datetime import datetime
 from slackclient import SlackClient
 
-# SQLite3 syntax to connect to database
-# 
-# conn = sqlite3.connect('SOME DATABASE')
-# serverCursor = conn.cursor() 
-
 de.MAIN_KEY = "lenderBot"
 slack_client = SlackClient(de.getToken())
 
@@ -73,6 +68,7 @@ def handle_command(command, channel,aUser,tStamp):
 	# This is where you implement commands
 
 	if command == "!history":
+		response = "History Command!"
 		directResponse(aUser,response)
 		return
     
@@ -87,9 +83,12 @@ def handle_command(command, channel,aUser,tStamp):
 
 	# ADMIN command
 	if command == "!farewell":
-		if aUser == "SPECIFY ID":
-			inChannelResponse(channel,"I'm an admin!")
+		result = adapter.isAdmin()
+		inChannelResponse(channel, result)
 		return
+		# if adapter.isAdmin(aUser):
+		# 	inChannelResponse(channel,"I'm an admin!")
+		# return
 	return
 
 if __name__ == "__main__":
