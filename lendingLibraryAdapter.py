@@ -24,7 +24,7 @@ sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
 # CREATE TABLE `Users` (
 # `ID`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-# `slackID`TEXT NOT NULL DEFAULT 'Slack ID Not Set' UNIQUE,
+# `slackID`TEXT NOT NULL UNIQUE,
 # `realName`TEXT NOT NULL DEFAULT 'Slack Name Not Set'
 # , IsAdmin BIT
 # );
@@ -46,7 +46,7 @@ def isAdmin(slackID):
 
 # CREATE TABLE MediaType (
 # ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-# Description TEXT NOT NULL
+# Description TEXT NOT NULL UNIQUE
 # );
 
 # Video games, board games, cards, etc
@@ -54,19 +54,41 @@ def isAdmin(slackID):
 def insert_MediaType(newType):
     return sql.SIMPLE_INSERT("MediaType", "Description", newType)
 
+def get_MediaTypeID(mediaType):
+    cmd = """
+    SELECT
+        ID
+    FROM
+        MediaType
+    WHERE
+        Description = '{}'
+    """.format(mediaType)
+    return sql.GET(cmd)[0][0]
+
 ###############################
 ###   MediaCategory Table   ###
 ###############################
 
 # CREATE TABLE MediaCategory (
 # ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-# Name TEXT NOT NULL
+# Name TEXT NOT NULL UNIQUE
 # );
 
 # family, Comedy, Horror, etc.
 
 def insert_MediaCategory(newCategory):
     return sql.SIMPLE_INSERT("MediaCategory", "Name", newCategory)
+
+def get_MediaCategoryID(mediaType):
+    cmd = """
+    SELECT
+        ID
+    FROM
+        MediaCategory
+    WHERE
+        Name = '{}'
+    """.format(mediaType)
+    return sql.GET(cmd)[0][0]
 
 #######################
 ###   Media Table   ###
@@ -83,7 +105,9 @@ def insert_MediaCategory(newCategory):
 # FOREIGN KEY (MediaCategory) REFERENCES MediaCategory(ID), 
 # FOREIGN KEY (OwnerID) REFERENCES Users(SlackID)
 # );
-
+    
+def insert_Media(mediaInfo):
+    return sql.SIMPLE_INSERT("Media", "MediaType, MediaCategory, OwnerID, LongGame", mediaInfo)
 
 ########################
 ###   Animal Table   ###
