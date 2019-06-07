@@ -19,11 +19,21 @@ de.MAIN_KEY = "data/lenderBot"
 # de.MAIN_KEY = "lenderBot/data/lenderBot" # prod location
 slack_client = SlackClient(de.getToken())
 
+###############################
+###   End the slack token   ###
+###############################
+
+#########################################################################
+#########################################################################
+
 # lenderbot's user ID in Slack: value is assigned after the bot starts up
 templateID = None
 
 # constants
 RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
+
+#########################################################################
+#########################################################################
 
 def parseSlackInput(aText):
 	if aText and len(aText) > 0:
@@ -70,8 +80,6 @@ def handle_command(command, channel,aUser,tStamp):
 	command = command.lower()
 	response = None
 
-	# This is where you implement commands
-
 	if command == "!history":
 		response = "History Command!"
 		directResponse(aUser,response)
@@ -90,8 +98,10 @@ def handle_command(command, channel,aUser,tStamp):
 	###   ADMIN commands   ###
 	##########################
 
+	### https://www.youtube.com/watch?v=mZHoHaAYHq8 - Conan the librarian
+
 	if command == "!admin":
-		if adapter.isAdmin(aUser)[0][0]:
+		if adapter.isAdmin(aUser):
 			inChannelResponse(channel,"I'm an admin!")
 			return
 		inChannelResponse(channel,"Not an admin.")

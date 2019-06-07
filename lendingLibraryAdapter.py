@@ -2,10 +2,10 @@ import databaseProvider as sql
 import sqlite3
 
 DATABASE = "data/lendingLibrary.db"
-# DATABASE = "lenderBot/data/lendingLibrary.db" # Prod path
+# DATABASE = "lenderBot/data/lendingLibrary.db" # prod location
 sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
-####################################
+##################################################
 
 # Tony Strickland and I both need to be admins
 # List all items - show available, or not
@@ -16,7 +16,7 @@ sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 # categories, types, genres, owner
 # Video games, card games, etc
 
-####################################
+##################################################
 
 #######################
 ###   Users Table   ###
@@ -38,7 +38,7 @@ def isAdmin(slackID):
     WHERE
         SlackId = '{0}'
     """.format(slackID)
-    return sql.GET(result)
+    return sql.GET(result)[0][0]
 
 ###########################
 ###   MediaType Table   ###
