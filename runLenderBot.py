@@ -180,7 +180,7 @@ def handle_command(command, channel, aUser, tStamp):
 			if channel in adminDMIDs:
 				mediaInfo = command[len("!addMedia")+1:].strip().title()
 				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
-					sqlResult = adapter.insert_MediaCategory(mediaInfo)
+					sqlResult = adapter.insert_Media(mediaInfo)
 					if not sqlResult:
 						inChannelResponse(channel,"""I'll add "{}" to the collection. Set will consume these later.""".format(mediaInfo))
 						return
