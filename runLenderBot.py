@@ -182,7 +182,7 @@ def handle_command(command, channel, aUser, tStamp):
 				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
 					sqlResult = adapter.insert_MediaCategory(mediaInfo)
 					if not sqlResult:
-						inChannelResponse(channel,"""I'll add "{}" to the collection. Set will consume""".format(mediaInfo))
+						inChannelResponse(channel,"""I'll add "{}" to the collection. Set will consume these later.""".format(mediaInfo))
 						return
 					inChannelResponse(channel, notEnough)
 					return
