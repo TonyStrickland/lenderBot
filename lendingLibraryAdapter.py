@@ -1,7 +1,8 @@
 import databaseProvider as sql
 import sqlite3
 
-DATABASE = "lendingLibrary.db"
+DATABASE = "data/lendingLibrary.db"
+# DATABASE = "lenderBot/data/lendingLibrary.db" # Prod path
 sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
 ####################################
@@ -13,15 +14,9 @@ sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 # allow a checkout/checkin
 # add/remove items from the library
 # categories, types, genres, owner
+# Video games, card games, etc
 
 ####################################
-
-def isAdmin():
-    result = sql.SELECT_ALL("MediaType")
-    return result
-    # if result[0] == 1:
-    #     return True
-    # return False
 
 #######################
 ###   Users Table   ###
@@ -33,6 +28,17 @@ def isAdmin():
 # `realName`TEXT NOT NULL DEFAULT 'Slack Name Not Set'
 # , IsAdmin BIT
 # );
+
+def isAdmin(slackID):
+    result = """
+    SELECT
+        IsAdmin
+    FROM
+        Users
+    WHERE
+        SlackId = '{0}'
+    """.format(slackID)
+    return sql.GET(result)
 
 ###########################
 ###   MediaType Table   ###

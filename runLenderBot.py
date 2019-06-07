@@ -11,7 +11,12 @@ import os
 from datetime import datetime
 from slackclient import SlackClient
 
-de.MAIN_KEY = "lenderBot"
+###############################
+###   Get the slack token   ###
+###############################
+
+de.MAIN_KEY = "data/lenderBot"
+# de.MAIN_KEY = "lenderBot/data/lenderBot" # prod location
 slack_client = SlackClient(de.getToken())
 
 # lenderbot's user ID in Slack: value is assigned after the bot starts up
@@ -81,15 +86,18 @@ def handle_command(command, channel,aUser,tStamp):
 		inChannelResponse(channel,response)
 		return
 
-	# ADMIN command
-	if command == "!farewell":
-		result = adapter.isAdmin()
-		inChannelResponse(channel, result)
+	##########################
+	###   ADMIN commands   ###
+	##########################
+
+	if command == "!admin":
+		if adapter.isAdmin(aUser)[0][0]:
+			inChannelResponse(channel,"I'm an admin!")
+			return
+		inChannelResponse(channel,"Not an admin.")
 		return
-		# if adapter.isAdmin(aUser):
-		# 	inChannelResponse(channel,"I'm an admin!")
-		# return
-	return
+
+	return ### End handle_command(command, channel,aUser,tStamp)
 
 if __name__ == "__main__":
 	if slack_client.rtm_connect(with_team_state=False):
