@@ -39,9 +39,15 @@ RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
 notAdmin = "Only the powerful can use this command!"
 notDirect = "That is a DM only command, weakling!"
 what = "I don't understand."
+what2 = "I have no idea what you mean."
+what3 = "That makes no sense!"
+what4 = "I have half a mind to send you to the Avatar of Mitra!"
 notEnough = "I can't add that, imbecile!"
-conanTells = "Listen well and I shall tell you of who I am!"
 
+notFound = "I couldn't find that! Perhaps it fell off a cliff."
+notFound2 = "Despite my best efforts, that has been lost to time."
+
+conanTells = "Listen well and I shall tell you of who I am!"
 aboutConan = "<https://www.youtube.com/watch?v=mZHoHaAYHq8|Conan the Librarian>"
 
 ############################################################################
@@ -126,7 +132,6 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, conanTells)
 		directResponse(aUser, aboutConan)
 		return
-	### https://www.youtube.com/watch?v=mZHoHaAYHq8 - Conan the librarian
 
 	##########################
 	###   ADMIN commands   ###
@@ -183,6 +188,31 @@ def handle_command(command, channel, aUser, tStamp):
 					inChannelResponse(channel, notEnough)
 					return
 				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	#############################
+	###   !getMediaCategory   ###
+	#############################
+
+	if command.startswith("!getMediaCategory".lower()):
+		if adapter.isAdmin(aUser):
+			if channel in adminDMIDs:
+				mediaInfo = command[len("!getMediaCategory")+1:].strip()
+				if len(mediaInfo) >= 3 and len(mediaInfo) < 20:
+					sqlResult = adapter.get_MediaCategoryID(mediaInfo)
+					if sqlResult != -1:
+						inChannelResponse(channel,"I see {}".format(sqlResult))
+						return
+					else:
+						inChannelResponse(channel, notFound2)
+						return
+					inChannelResponse(channel, notEnough)
+					return
+				inChannelResponse(channel, what3)
 				return
 			inChannelResponse(channel, notDirect)
 			return

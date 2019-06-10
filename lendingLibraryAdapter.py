@@ -36,7 +36,7 @@ def isAdmin(slackID):
     FROM
         Users
     WHERE
-        SlackId = '{0}'
+        SlackId = '{0}';
     """.format(slackID)
     return sql.GET(result)[0][0]
 
@@ -54,6 +54,9 @@ def isAdmin(slackID):
 def insert_MediaType(newType):
     return sql.SIMPLE_INSERT("MediaType", "Description", newType)
 
+def remove_MediaType(ID):
+    return sql.SIMPLE_DELETE("MediaType", "ID", ID)
+
 def get_MediaTypeID(mediaType):
     cmd = """
     SELECT
@@ -61,12 +64,15 @@ def get_MediaTypeID(mediaType):
     FROM
         MediaType
     WHERE
-        Description LIKE '{}'
+        Name LIKE '{}';
     """.format(mediaType)
-    result = sql.GET(cmd)[0][0]
-
     
-    return 
+    try:
+        result = sql.GET(cmd)[0][0]
+    except:
+        return -1
+
+    return result
 
 ###############################
 ###   MediaCategory Table   ###
@@ -82,6 +88,9 @@ def get_MediaTypeID(mediaType):
 def insert_MediaCategory(newCategory):
     return sql.SIMPLE_INSERT("MediaCategory", "Name", newCategory)
 
+def remove_MediaCategory(ID):
+    return sql.SIMPLE_DELETE("MediaCategory", "ID", ID)
+
 def get_MediaCategoryID(mediaType):
     cmd = """
     SELECT
@@ -89,9 +98,15 @@ def get_MediaCategoryID(mediaType):
     FROM
         MediaCategory
     WHERE
-        Name LIKE '{}'
+        Name LIKE '{}';
     """.format(mediaType)
-    return sql.GET(cmd)[0][0]
+
+    try:
+        result = sql.GET(cmd)[0][0]
+    except:
+        return -1
+
+    return result
 
 #######################
 ###   Media Table   ###
@@ -111,6 +126,12 @@ def get_MediaCategoryID(mediaType):
     
 def insert_Media(mediaInfo):
     return sql.SIMPLE_INSERT("Media", "MediaType, MediaCategory, OwnerID, LongGame", mediaInfo)
+
+def remove_Media(ID):
+    return sql.SIMPLE_DELETE("Media", "ID", ID)
+
+def get_Media():
+    return sql.SELECT_ALL("Media")
 
 ########################
 ###   Animal Table   ###

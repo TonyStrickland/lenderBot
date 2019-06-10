@@ -28,7 +28,7 @@ def GET(sqlCmd):
 		result = someCursor.fetchall()
 
 	except:
-		result = -1
+		return -1
 
 	finally:
 		someCursor.close()
