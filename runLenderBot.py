@@ -26,14 +26,14 @@ slack_client = SlackClient(de.getToken())
 ############################################################################
 ############################################################################
 
-# lenderbot's user ID in Slack: value is assigned after the bot starts up
+# lenderBot's user ID in Slack: value is assigned after the bot starts up
 templateID = None
 
-# constants
+# CONSTANTS
 RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
 
 ###########################
-###   Snarky comments   ###
+###   Snarky Comments   ###
 ###########################
 
 notAdmin = "Only the powerful can use this command!"
@@ -101,7 +101,28 @@ def directResponse(someUser,text):
 ###   Parsing commands   ###
 ############################
 
-def parseMedia(mediaInfo):
+def parseMedia_insert(mediaInfo):
+	try:
+		result = [x.strip() for x in mediaInfo.split(',', 4)]
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
+def parseMedia_select(mediaInfo):
+	try:
+		result = [x.strip() for x in mediaInfo.split(',', 4)]
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
+def parseMediaType_select(mediaInfo):
+	try:
+		result = [x.strip() for x in mediaInfo.split(',', 4)]
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
+def parseMediaCategory_select(mediaInfo):
 	try:
 		result = [x.strip() for x in mediaInfo.split(',', 4)]
 	except: # if there aren't enough parts
@@ -195,6 +216,27 @@ def handle_command(command, channel, aUser, tStamp):
 		return
 
 	#############################
+	###   !addMediaCategory   ###
+	#############################
+
+	if command == "!allMediaCategory".lower():
+		if adapter.isAdmin(aUser):
+			if channel in adminDMIDs:
+				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
+					sqlResult = adapter.insert_MediaCategory(mediaInfo)
+					if not sqlResult:
+						inChannelResponse(channel,"""I'll add "{}" to the categories of media! This pleases Ymir!""".format(mediaInfo))
+						return
+					inChannelResponse(channel, notEnough)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	#############################
 	###   !getMediaCategory   ###
 	#############################
 
@@ -205,7 +247,7 @@ def handle_command(command, channel, aUser, tStamp):
 				if len(mediaInfo) >= 3 and len(mediaInfo) < 20:
 					sqlResult = adapter.get_MediaCategoryID(mediaInfo)
 					if sqlResult != -1:
-						inChannelResponse(channel,"I see {}".format(sqlResult))
+						inChannelResponse(channel,"I see {}".format(sqlResult)) # success
 						return
 					else:
 						inChannelResponse(channel, notFound2)

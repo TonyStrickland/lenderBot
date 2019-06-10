@@ -57,6 +57,9 @@ def insert_MediaType(newType):
 def remove_MediaType(ID):
     return sql.SIMPLE_DELETE("MediaType", "ID", ID)
 
+def selectAll_MediaType():
+    return sql.SELECT_ALL("MediaType")
+
 def get_MediaTypeID(mediaType):
     cmd = """
     SELECT
@@ -90,6 +93,9 @@ def insert_MediaCategory(newCategory):
 
 def remove_MediaCategory(ID):
     return sql.SIMPLE_DELETE("MediaCategory", "ID", ID)
+
+def selectAll_MediaCategory():
+    return sql.SELECT_ALL("MediaCategory")
 
 def get_MediaCategoryID(mediaType):
     cmd = """
@@ -130,7 +136,7 @@ def insert_Media(mediaInfo):
 def remove_Media(ID):
     return sql.SIMPLE_DELETE("Media", "ID", ID)
 
-def get_Media():
+def selectAll_Media():
     return sql.SELECT_ALL("Media")
 
 ########################
