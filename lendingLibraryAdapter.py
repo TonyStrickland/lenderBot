@@ -61,9 +61,12 @@ def get_MediaTypeID(mediaType):
     FROM
         MediaType
     WHERE
-        Description = '{}'
+        Description LIKE '{}'
     """.format(mediaType)
-    return sql.GET(cmd)[0][0]
+    result = sql.GET(cmd)[0][0]
+
+    
+    return 
 
 ###############################
 ###   MediaCategory Table   ###
@@ -86,7 +89,7 @@ def get_MediaCategoryID(mediaType):
     FROM
         MediaCategory
     WHERE
-        Name = '{}'
+        Name LIKE '{}'
     """.format(mediaType)
     return sql.GET(cmd)[0][0]
 

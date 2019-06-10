@@ -40,6 +40,9 @@ notAdmin = "Only the powerful can use this command!"
 notDirect = "That is a DM only command, weakling!"
 what = "I don't understand."
 notEnough = "I can't add that, imbecile!"
+conanTells = "Listen well and I shall tell you of who I am!"
+
+aboutConan = "<https://www.youtube.com/watch?v=mZHoHaAYHq8|Conan the Librarian>"
 
 ############################################################################
 ############################################################################
@@ -96,7 +99,7 @@ def parseMedia(mediaInfo):
 	try:
 		result = [x.strip() for x in mediaInfo.split(',', 4)]
 	except: # if there aren't enough parts
-		return False # returns all false
+		return False # returns false
 	return result
 
 ##################################################################################################################################
@@ -119,12 +122,15 @@ def handle_command(command, channel, aUser, tStamp):
 		# need to generate a random Conan fact
 		return
 
+	if command == "!who":
+		inChannelResponse(channel, conanTells)
+		directResponse(aUser, aboutConan)
+		return
+	### https://www.youtube.com/watch?v=mZHoHaAYHq8 - Conan the librarian
+
 	##########################
 	###   ADMIN commands   ###
 	##########################
-
-	### https://www.youtube.com/watch?v=mZHoHaAYHq8 - Conan the librarian
-	### DK9JT0TMJ - DM channel with Conan
 
 	adminDMIDs = {
 		'DK9JT0TMJ' : "Andre Gueret",
@@ -132,12 +138,16 @@ def handle_command(command, channel, aUser, tStamp):
 		'DKCVBJPNC' : "Tony Strickland"
 	}
 
-	if command == "!admin":
-		if adapter.isAdmin(aUser):
-			inChannelResponse(channel,"I'm an admin!")
-			return
-		inChannelResponse(channel,"Not an admin.")
-		return
+	# if command == "!admin":
+	# 	if adapter.isAdmin(aUser):
+	# 		inChannelResponse(channel,"I'm an admin!")
+	# 		return
+	# 	inChannelResponse(channel,"Not an admin.")
+	# 	return
+
+	#########################
+	###   !addMediaType   ###
+	#########################
 
 	if command.startswith("!addMediaType".lower()):
 		if adapter.isAdmin(aUser):
@@ -157,6 +167,10 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
+	#############################
+	###   !addMediaCategory   ###
+	#############################
+
 	if command.startswith("!addMediaCategory".lower()):
 		if adapter.isAdmin(aUser):
 			if channel in adminDMIDs:
@@ -175,14 +189,19 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
+	#####################
+	###   !addMedia   ###
+	#####################
+
 	if command.startswith("!addMedia".lower()):
 		if adapter.isAdmin(aUser):
 			if channel in adminDMIDs:
 				mediaInfo = command[len("!addMedia")+1:].strip().title()
 				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
 					sqlResult = adapter.insert_Media(mediaInfo)
+					# need to parse out and insert data later
 					if not sqlResult:
-						inChannelResponse(channel,"""I'll add "{}" to the collection. Set will consume these later.""".format(mediaInfo))
+						inChannelResponse(channel,"""I'll add "{}" to the hoard!""".format(mediaInfo))
 						return
 					inChannelResponse(channel, notEnough)
 					return
@@ -193,7 +212,12 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
-	return ### End handle_command(command, channel,aUser,tStamp)
+	######
+	return 
+
+	##############################
+	###   End handle_command   ###
+	##############################
 
 ##################################################################################################################################
 
