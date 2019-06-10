@@ -36,6 +36,8 @@ RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
 ###   Snarky Comments   ###
 ###########################
 
+adding = "I'll add that to the hoard!"
+
 notAdmin = "Only the powerful can use this command!"
 notDirect = "That is a DM only command, weakling!"
 what = "I don't understand."
@@ -49,6 +51,8 @@ notFound2 = "Despite my best efforts, that has been lost to time."
 
 conanTells = "Listen well and I shall tell you of who I am!"
 aboutConan = "<https://www.youtube.com/watch?v=mZHoHaAYHq8|Conan the Librarian>"
+
+cromHelp = "Crom helps those who help themselves."
 
 ############################################################################
 ############################################################################
@@ -101,12 +105,25 @@ def directResponse(someUser,text):
 ###   Parsing commands   ###
 ############################
 
+def longGame(word):
+	if word.lower() == "long":
+		return 1
+	return 0
+
 def parseMedia_insert(mediaInfo):
+	# "MediaType, MediaCategory, OwnerID, LongGame"
 	try:
-		result = [x.strip() for x in mediaInfo.split(',', 4)]
+		stripper = [x.strip() for x in mediaInfo.split(',', 5)]
+		theMediaType = adapter.get_MediaTypeID(stripper[0])
+		theMediaCategory = adapter.get_MediaCategoryID(stripper[1])
+		theUser = stripper[2].replace('<','').replace('>','').replace('@','').upper()
+		isLong = longGame(stripper[3])
+		theFullName = stripper[4]
+		insertString = "{}, {}, '{}', '{}', {}".format(theMediaType, theMediaCategory, theUser, theFullName, isLong)
+
 	except: # if there aren't enough parts
 		return False # returns false
-	return result
+	return insertString
 
 def parseMedia_select(mediaInfo):
 	try:
@@ -269,11 +286,11 @@ def handle_command(command, channel, aUser, tStamp):
 		if adapter.isAdmin(aUser):
 			if channel in adminDMIDs:
 				mediaInfo = command[len("!addMedia")+1:].strip().title()
-				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
-					sqlResult = adapter.insert_Media(mediaInfo)
-					# need to parse out and insert data later
+				if mediaInfo:
+					parsed = parseMedia_insert(mediaInfo)
+					sqlResult = adapter.insert_Media(parsed)
 					if not sqlResult:
-						inChannelResponse(channel,"""I'll add "{}" to the hoard!""".format(mediaInfo))
+						inChannelResponse(channel, adding)
 						return
 					inChannelResponse(channel, notEnough)
 					return

@@ -48,7 +48,7 @@ def SIMPLE_INSERT(tableName, column, value):
 		INSERT INTO 
 			{0} ({1})
 		VALUES
-			('{2}');
+			({2});
 	""".format(tableName, column, value)
 
 	return EXEC(cmd)

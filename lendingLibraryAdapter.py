@@ -67,7 +67,7 @@ def get_MediaTypeID(mediaType):
     FROM
         MediaType
     WHERE
-        Name LIKE '{}';
+        Description LIKE '{}';
     """.format(mediaType)
     
     try:
@@ -122,16 +122,17 @@ def get_MediaCategoryID(mediaType):
 # ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
 # MediaType INTEGER NOT NULL DEFAULT 1, 
 # MediaCategory INTEGER NOT NULL DEFAULT 1, 
-# OwnerID TEXT NOT NULL, FullName TEXT NOT NULL, 
+# OwnerID TEXT NOT NULL, 
+# FullName TEXT NOT NULL, 
 # LongGame BIT NOT NULL DEFAULT 1, 
 
 # FOREIGN KEY (MediaType) REFERENCES MediaType(ID), 
 # FOREIGN KEY (MediaCategory) REFERENCES MediaCategory(ID), 
 # FOREIGN KEY (OwnerID) REFERENCES Users(SlackID)
 # );
-    
+
 def insert_Media(mediaInfo):
-    return sql.SIMPLE_INSERT("Media", "MediaType, MediaCategory, OwnerID, LongGame", mediaInfo)
+    return sql.SIMPLE_INSERT("Media", "MediaType, MediaCategory, OwnerID, FullName, LongGame", mediaInfo)
 
 def remove_Media(ID):
     return sql.SIMPLE_DELETE("Media", "ID", ID)
