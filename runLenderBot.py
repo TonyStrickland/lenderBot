@@ -127,21 +127,35 @@ def parseMedia_insert(mediaInfo):
 
 def parseMedia_select(mediaInfo):
 	try:
-		result = [x.strip() for x in mediaInfo.split(',', 4)]
+		result = [x.strip() for x in mediaInfo.split(',', 5)]
 	except: # if there aren't enough parts
 		return False # returns false
 	return result
 
 def parseMediaType_select(mediaInfo):
 	try:
-		result = [x.strip() for x in mediaInfo.split(',', 4)]
+		result = "I will show you my types of media. \nTHEY MUST BE UNIQUE!\n"
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "{}\t".format(y)
+				if x == 1:
+					result += "{}\n".format(y)
+
 	except: # if there aren't enough parts
 		return False # returns false
 	return result
 
 def parseMediaCategory_select(mediaInfo):
 	try:
-		result = [x.strip() for x in mediaInfo.split(',', 4)]
+		result = "I will show you my categories. \nTHEY MUST BE UNIQUE!\n"
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "{}\t".format(y)
+				if x == 1:
+					result += "{}\n".format(y)
+
 	except: # if there aren't enough parts
 		return False # returns false
 	return result
@@ -210,6 +224,22 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
+	#########################
+	###   !allMediaType   ###
+	#########################
+
+	if command == "!allMediaType".lower():
+		if adapter.isAdmin(aUser):
+			if channel in adminDMIDs:
+				allCategory = adapter.selectAll_MediaType()
+				parsed = parseMediaType_select(allCategory)
+				inChannelResponse(channel, parsed)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
 	#############################
 	###   !addMediaCategory   ###
 	#############################
@@ -233,20 +263,15 @@ def handle_command(command, channel, aUser, tStamp):
 		return
 
 	#############################
-	###   !addMediaCategory   ###
+	###   !allMediaCategory   ###
 	#############################
 
 	if command == "!allMediaCategory".lower():
 		if adapter.isAdmin(aUser):
 			if channel in adminDMIDs:
-				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
-					sqlResult = adapter.insert_MediaCategory(mediaInfo)
-					if not sqlResult:
-						inChannelResponse(channel,"""I'll add "{}" to the categories of media! This pleases Ymir!""".format(mediaInfo))
-						return
-					inChannelResponse(channel, notEnough)
-					return
-				inChannelResponse(channel, what)
+				allCategory = adapter.selectAll_MediaCategory()
+				parsed = parseMediaCategory_select(allCategory)
+				inChannelResponse(channel, parsed)
 				return
 			inChannelResponse(channel, notDirect)
 			return
@@ -257,26 +282,26 @@ def handle_command(command, channel, aUser, tStamp):
 	###   !getMediaCategory   ###
 	#############################
 
-	if command.startswith("!getMediaCategory".lower()):
-		if adapter.isAdmin(aUser):
-			if channel in adminDMIDs:
-				mediaInfo = command[len("!getMediaCategory")+1:].strip()
-				if len(mediaInfo) >= 3 and len(mediaInfo) < 20:
-					sqlResult = adapter.get_MediaCategoryID(mediaInfo)
-					if sqlResult != -1:
-						inChannelResponse(channel,"I see {}".format(sqlResult)) # success
-						return
-					else:
-						inChannelResponse(channel, notFound2)
-						return
-					inChannelResponse(channel, notEnough)
-					return
-				inChannelResponse(channel, what3)
-				return
-			inChannelResponse(channel, notDirect)
-			return
-		inChannelResponse(channel, notAdmin)
-		return
+	# if command.startswith("!getMediaCategory".lower()):
+	# 	if adapter.isAdmin(aUser):
+	# 		if channel in adminDMIDs:
+	# 			mediaInfo = command[len("!getMediaCategory")+1:].strip()
+	# 			if len(mediaInfo) >= 3 and len(mediaInfo) < 20:
+	# 				sqlResult = adapter.get_MediaCategoryID(mediaInfo)
+	# 				if sqlResult != -1:
+	# 					inChannelResponse(channel,"I see {}".format(sqlResult)) # success
+	# 					return
+	# 				else:
+	# 					inChannelResponse(channel, notFound2)
+	# 					return
+	# 				inChannelResponse(channel, notEnough)
+	# 				return
+	# 			inChannelResponse(channel, what3)
+	# 			return
+	# 		inChannelResponse(channel, notDirect)
+	# 		return
+	# 	inChannelResponse(channel, notAdmin)
+	# 	return
 
 	#####################
 	###   !addMedia   ###
