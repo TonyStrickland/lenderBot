@@ -177,14 +177,14 @@ def handle_command(command, channel, aUser, tStamp):
 	command = command.lower()
 	response = None
     
-	if command == "!test":
-		response = (("""Text:{0}
-				Channel:{1}
-				TS:{2}
-				User:{3}
-				""").format(command,channel,tStamp,aUser))
-		inChannelResponse(channel,response)
-		return
+	# if command == "!test":
+	# 	response = (("""Text:{0}
+	# 			Channel:{1}
+	# 			TS:{2}
+	# 			User:{3}
+	# 			""").format(command,channel,tStamp,aUser))
+	# 	inChannelResponse(channel,response)
+	# 	return
 	    
 	if command == "!fact":
 		# need to generate a random Conan fact
@@ -238,7 +238,7 @@ def handle_command(command, channel, aUser, tStamp):
 	###   !allMediaType   ###
 	#########################
 
-	if command == "!allMediaType".lower():
+	if command == "!allMediaTypes".lower():
 		if adapter.isAdmin(aUser):
 			if channel in adminDMIDs:
 				allCategory = adapter.selectAll_MediaType()
@@ -276,7 +276,7 @@ def handle_command(command, channel, aUser, tStamp):
 	###   !allMediaCategory   ###
 	#############################
 
-	if command == "!allMediaCategory".lower():
+	if command == "!allMediaCategories".lower():
 		if adapter.isAdmin(aUser):
 			if channel in adminDMIDs:
 				allCategory = adapter.selectAll_MediaCategory()

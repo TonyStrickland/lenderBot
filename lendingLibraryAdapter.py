@@ -23,10 +23,11 @@ sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 #######################
 
 # CREATE TABLE `Users` (
-# `ID`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-# `slackID`TEXT NOT NULL UNIQUE,
-# `realName`TEXT NOT NULL DEFAULT 'Slack Name Not Set'
-# , IsAdmin BIT
+# 	`ID`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+# 	`userName`	TEXT NOT NULL,
+# 	`slackID`	TEXT NOT NULL UNIQUE,
+# 	`directID`	TEXT NOT NULL,
+# 	`IsAdmin`	BIT NOT NULL DEFAULT 0
 # );
 
 def isAdmin(slackID):
