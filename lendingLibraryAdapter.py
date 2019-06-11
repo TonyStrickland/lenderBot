@@ -73,7 +73,7 @@ def get_MediaTypeID(mediaType):
     try:
         result = sql.GET(cmd)[0][0]
     except:
-        return -1
+        result = 1 # defaults to 1, undefined
 
     return result
 
@@ -110,7 +110,7 @@ def get_MediaCategoryID(mediaType):
     try:
         result = sql.GET(cmd)[0][0]
     except:
-        return -1
+        result = 1 # defaults to 1, undefined
 
     return result
 
@@ -139,36 +139,3 @@ def remove_Media(ID):
 
 def selectAll_Media():
     return sql.SELECT_ALL("Media")
-
-########################
-###   Animal Table   ###
-########################
-
-# CREATE TABLE `Animal` (
-# 	`ID`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-# 	`Name`	TEXT,
-# 	`Type`	INTEGER
-# );
-
-def selectAllAnimals():
-    return sql.SELECT_ALL("Animal")
-
-def insertManyAnimals(aList):
-    columns = "Name", "Type"
-    fullList = columns + aList
-    return sql.VARIABLE_INSERT("Animal", 2, fullList)
-
-def updateSimpleAnimals(updateColumn, updateValue, whereColumn, whereCondition):
-    return sql.SIMPLE_UPDATE("Animal", updateColumn, updateValue, whereColumn, whereCondition)
-    
-def deleteSimpleAnimals(whereColumn, whereCondition):
-    return sql.SIMPLE_DELETE("Animal", whereColumn, whereCondition)
-    
-def testAnimal():
-    cmd = """
-        INSERT INTO 
-            Animal (Name, Type)
-        VALUES
-            ('Cat', 3);
-    """
-    return sql.EXEC(cmd)

@@ -36,7 +36,7 @@ RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
 ###   Snarky Comments   ###
 ###########################
 
-adding = "I'll add that to the hoard!"
+adding = """I'll add "{}" to the hoard!"""
 
 notAdmin = "Only the powerful can use this command!"
 notDirect = "That is a DM only command, weakling!"
@@ -110,20 +110,30 @@ def longGame(word):
 		return 1
 	return 0
 
+def checkReturn(someInt):
+	try:
+		if someInt < 0:
+			return 1
+	except:
+		return 1
+	return someInt
+
 def parseMedia_insert(mediaInfo):
 	# "MediaType, MediaCategory, OwnerID, LongGame"
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 5)]
+
 		theMediaType = adapter.get_MediaTypeID(stripper[0])
 		theMediaCategory = adapter.get_MediaCategoryID(stripper[1])
 		theUser = stripper[2].replace('<','').replace('>','').replace('@','').upper()
 		isLong = longGame(stripper[3])
 		theFullName = stripper[4]
+
 		insertString = "{}, {}, '{}', '{}', {}".format(theMediaType, theMediaCategory, theUser, theFullName, isLong)
 
 	except: # if there aren't enough parts
 		return False # returns false
-	return insertString
+	return insertString, theFullName
 
 def parseMedia_select(mediaInfo):
 	try:
@@ -278,31 +288,6 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
-	#############################
-	###   !getMediaCategory   ###
-	#############################
-
-	# if command.startswith("!getMediaCategory".lower()):
-	# 	if adapter.isAdmin(aUser):
-	# 		if channel in adminDMIDs:
-	# 			mediaInfo = command[len("!getMediaCategory")+1:].strip()
-	# 			if len(mediaInfo) >= 3 and len(mediaInfo) < 20:
-	# 				sqlResult = adapter.get_MediaCategoryID(mediaInfo)
-	# 				if sqlResult != -1:
-	# 					inChannelResponse(channel,"I see {}".format(sqlResult)) # success
-	# 					return
-	# 				else:
-	# 					inChannelResponse(channel, notFound2)
-	# 					return
-	# 				inChannelResponse(channel, notEnough)
-	# 				return
-	# 			inChannelResponse(channel, what3)
-	# 			return
-	# 		inChannelResponse(channel, notDirect)
-	# 		return
-	# 	inChannelResponse(channel, notAdmin)
-	# 	return
-
 	#####################
 	###   !addMedia   ###
 	#####################
@@ -312,10 +297,10 @@ def handle_command(command, channel, aUser, tStamp):
 			if channel in adminDMIDs:
 				mediaInfo = command[len("!addMedia")+1:].strip().title()
 				if mediaInfo:
-					parsed = parseMedia_insert(mediaInfo)
+					parsed, mediaName = parseMedia_insert(mediaInfo)
 					sqlResult = adapter.insert_Media(parsed)
 					if not sqlResult:
-						inChannelResponse(channel, adding)
+						inChannelResponse(channel, adding.format(mediaName))
 						return
 					inChannelResponse(channel, notEnough)
 					return
