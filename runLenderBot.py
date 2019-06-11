@@ -119,9 +119,8 @@ def checkReturn(someInt):
 	return someInt
 
 def parseMedia_insert(mediaInfo):
-	# "MediaType, MediaCategory, OwnerID, LongGame"
 	try:
-		stripper = [x.strip() for x in mediaInfo.split(',', 5)]
+		stripper = [x.strip() for x in mediaInfo.split(',', 4)]
 
 		theMediaType = adapter.get_MediaTypeID(stripper[0])
 		theMediaCategory = adapter.get_MediaCategoryID(stripper[1])
@@ -137,7 +136,7 @@ def parseMedia_insert(mediaInfo):
 
 def parseMedia_select(mediaInfo):
 	try:
-		result = [x.strip() for x in mediaInfo.split(',', 5)]
+		result = [x.strip() for x in mediaInfo.split(',', 4)]
 	except: # if there aren't enough parts
 		return False # returns false
 	return result
@@ -199,12 +198,6 @@ def handle_command(command, channel, aUser, tStamp):
 	###   ADMIN commands   ###
 	##########################
 
-	adminDMIDs = {
-		'DK9JT0TMJ' : "Andre Gueret",
-		'DK1G58Q0K' : "Daniel Hodge",
-		'DKCVBJPNC' : "Tony Strickland"
-	}
-
 	# if command == "!admin":
 	# 	if adapter.isAdmin(aUser):
 	# 		inChannelResponse(channel,"I'm an admin!")
@@ -218,7 +211,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command.startswith("!addMediaType".lower()):
 		if adapter.isAdmin(aUser):
-			if channel in adminDMIDs:
+			if adapter.isDirect(channel):
 				mediaInfo = command[len("!addMediaType")+1:].strip().title()
 				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
 					sqlResult = adapter.insert_MediaType(mediaInfo)
@@ -240,7 +233,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command == "!allMediaTypes".lower():
 		if adapter.isAdmin(aUser):
-			if channel in adminDMIDs:
+			if adapter.isDirect(channel):
 				allCategory = adapter.selectAll_MediaType()
 				parsed = parseMediaType_select(allCategory)
 				inChannelResponse(channel, parsed)
@@ -256,7 +249,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command.startswith("!addMediaCategory".lower()):
 		if adapter.isAdmin(aUser):
-			if channel in adminDMIDs:
+			if adapter.isDirect(channel):
 				mediaInfo = command[len("!addMediaCategory")+1:].strip().title()
 				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
 					sqlResult = adapter.insert_MediaCategory(mediaInfo)
@@ -278,7 +271,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command == "!allMediaCategories".lower():
 		if adapter.isAdmin(aUser):
-			if channel in adminDMIDs:
+			if adapter.isDirect(channel):
 				allCategory = adapter.selectAll_MediaCategory()
 				parsed = parseMediaCategory_select(allCategory)
 				inChannelResponse(channel, parsed)
@@ -294,7 +287,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command.startswith("!addMedia".lower()):
 		if adapter.isAdmin(aUser):
-			if channel in adminDMIDs:
+			if adapter.isDirect(channel):
 				mediaInfo = command[len("!addMedia")+1:].strip().title()
 				if mediaInfo:
 					parsed, mediaName = parseMedia_insert(mediaInfo)

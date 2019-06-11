@@ -37,9 +37,32 @@ def isAdmin(slackID):
     FROM
         Users
     WHERE
-        SlackId = '{0}';
+        slackID = '{0}';
     """.format(slackID)
-    return sql.GET(result)[0][0]
+
+    try:
+        fin = sql.GET(result)[0][0]
+    except:
+        fin = 0
+
+    return fin
+
+def isDirect(channelID):
+    result = """
+    SELECT
+        *
+    FROM
+        Users
+    WHERE
+        directID = '{0}';
+    """.format(channelID)
+
+    try:
+        fin = sql.GET(result)[0][0]
+    except:
+        fin = 0
+
+    return fin
 
 ###########################
 ###   MediaType Table   ###
@@ -53,10 +76,13 @@ def isAdmin(slackID):
 # Video games, board games, cards, etc
 
 def insert_MediaType(newType):
-    return sql.SIMPLE_INSERT("MediaType", "Description", newType)
+    return sql.SIMPLE_INSERT("MediaType", "Description", "'{}'".format(newType))
 
 def remove_MediaType(ID):
     return sql.SIMPLE_DELETE("MediaType", "ID", ID)
+
+def update_MediaType(ID, desc):
+    return sql.SIMPLE_UPDATE("MediaType", "Descritpion", "'{}'".format(desc), "ID", ID)
 
 def selectAll_MediaType():
     return sql.SELECT_ALL("MediaType")
@@ -90,7 +116,7 @@ def get_MediaTypeID(mediaType):
 # family, Comedy, Horror, etc.
 
 def insert_MediaCategory(newCategory):
-    return sql.SIMPLE_INSERT("MediaCategory", "Name", newCategory)
+    return sql.SIMPLE_INSERT("MediaCategory", "Name", "'{}'".format(newCategory))
 
 def remove_MediaCategory(ID):
     return sql.SIMPLE_DELETE("MediaCategory", "ID", ID)
