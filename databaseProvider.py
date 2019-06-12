@@ -7,7 +7,8 @@ def EXEC(sqlCmd): # fetches data from the database
 	try:
 		someCursor = MAIN_CONNECTION.cursor()
 		someCursor.execute(sqlCmd)
-		someCursor.close()
+		if someCursor.rowcount == 0:
+			return 9
 		MAIN_CONNECTION.commit() 
 
 		return 0
@@ -20,6 +21,8 @@ def EXEC(sqlCmd): # fetches data from the database
 
 	except:
 		return 9
+	finally:
+		someCursor.close()
 
 def GET(sqlCmd):
 	try:

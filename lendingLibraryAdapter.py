@@ -39,7 +39,7 @@ def isAdmin(slackID):
     WHERE
         slackID = '{0}';
     """.format(slackID)
-
+    
     try:
         fin = sql.GET(result)[0][0]
     except:
@@ -82,7 +82,7 @@ def remove_MediaType(ID):
     return sql.SIMPLE_DELETE("MediaType", "ID", ID)
 
 def update_MediaType(ID, desc):
-    return sql.SIMPLE_UPDATE("MediaType", "Descritpion", "'{}'".format(desc), "ID", ID)
+    return sql.SIMPLE_UPDATE("MediaType", "Description", "'{}'".format(desc), "ID", ID)
 
 def selectAll_MediaType():
     return sql.SELECT_ALL("MediaType")

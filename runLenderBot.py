@@ -11,6 +11,13 @@ import os
 from datetime import datetime
 from slackclient import SlackClient
 
+#####################
+###   TODO List   ###
+#####################
+
+# update to the 2.x version and python3
+# https://github.com/slackapi/python-slackclient/wiki/Migrating-to-2.x#basic-usage-of-the-rtm-client
+
 ###############################
 ###   Get the slack token   ###
 ###############################
@@ -37,6 +44,8 @@ RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
 ###########################
 
 adding = """I'll add "{}" to the hoard!"""
+updateMediaType = """MediaType ID {} will now be set to "{}" """
+updateMediaCategory = """MediaCategory ID {} will now be set to "{}" """
 
 notAdmin = "Only the powerful can use this command!"
 notDirect = "That is a DM only command, weakling!"
@@ -134,7 +143,7 @@ def parseMedia_insert(mediaInfo):
 		return False # returns false
 	return insertString, theFullName
 
-def parseMedia_select(mediaInfo):
+def parseMedia_select(mediaInfo): # TODO update the selection parsing
 	try:
 		result = [x.strip() for x in mediaInfo.split(',', 4)]
 	except: # if there aren't enough parts
@@ -154,6 +163,16 @@ def parseMediaType_select(mediaInfo):
 	except: # if there aren't enough parts
 		return False # returns false
 	return result
+
+def parseMediaType_update(mediaInfo):
+	try:
+		stripper = [x.strip() for x in mediaInfo.split(',', 1)]
+		typeID = stripper[0]
+		newType = stripper[1]
+
+	except: # if there aren't enough parts
+		return False # returns false
+	return typeID, newType
 
 def parseMediaCategory_select(mediaInfo):
 	try:
@@ -198,13 +217,6 @@ def handle_command(command, channel, aUser, tStamp):
 	###   ADMIN commands   ###
 	##########################
 
-	# if command == "!admin":
-	# 	if adapter.isAdmin(aUser):
-	# 		inChannelResponse(channel,"I'm an admin!")
-	# 		return
-	# 	inChannelResponse(channel,"Not an admin.")
-	# 	return
-
 	#########################
 	###   !addMediaType   ###
 	#########################
@@ -227,9 +239,9 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
-	#########################
-	###   !allMediaType   ###
-	#########################
+	##########################
+	###   !allMediaTypes   ###
+	##########################
 
 	if command == "!allMediaTypes".lower():
 		if adapter.isAdmin(aUser):
@@ -237,6 +249,32 @@ def handle_command(command, channel, aUser, tStamp):
 				allCategory = adapter.selectAll_MediaType()
 				parsed = parseMediaType_select(allCategory)
 				inChannelResponse(channel, parsed)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	# update_MediaType
+
+	############################
+	###   !updateMediaType   ###
+	############################
+
+	if command.startswith("!updateMediaType".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				mediaInfo = command[len("!updateMediaType")+1:].strip().title()
+				if mediaInfo:
+					typeID, newType = parseMediaType_update(mediaInfo)
+					newType = newType.title()
+					sqlResult = adapter.update_MediaType(typeID, newType)
+					if not sqlResult:
+						inChannelResponse(channel, updateMediaType.format(typeID, newType))
+						return
+					inChannelResponse(channel, notEnough)
+					return
+				inChannelResponse(channel, what)
 				return
 			inChannelResponse(channel, notDirect)
 			return
@@ -265,9 +303,9 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
-	#############################
-	###   !allMediaCategory   ###
-	#############################
+	###############################
+	###   !allMediaCategories   ###
+	###############################
 
 	if command == "!allMediaCategories".lower():
 		if adapter.isAdmin(aUser):
