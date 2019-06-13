@@ -152,7 +152,7 @@ def parseMedia_insert(mediaInfo):
 
 def parseMedia_select(mediaInfo): # TODO update the selection parsing
 	try:
-		result = [x.strip() for x in mediaInfo.split(',', 4)]
+		result = "Alow me to show you the hoard!\n"
 	except: # if there aren't enough parts
 		return False # returns false
 	return result
@@ -213,7 +213,7 @@ def handle_command(command, channel, aUser, tStamp):
 	response = None
 	    
 	if command == "!fact":
-		# need to generate a random Conan fact
+		# TODO generate a random Conan fact
 		return
 
 	if command == "!who":
@@ -344,6 +344,22 @@ def handle_command(command, channel, aUser, tStamp):
 	# 	return
 
 	#####################
+	###   !allMedia   ###
+	#####################
+
+	if command == "!allMedia".lower():
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				allMedia = adapter.selectAll_Media()
+				parsed = parseMediaCategory_select(allCategory)
+				inChannelResponse(channel, parsed)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	#####################
 	###   !addMedia   ###
 	#####################
 
@@ -377,7 +393,6 @@ def handle_command(command, channel, aUser, tStamp):
 				if someID:
 					exists = adapter.select_MediaID(someID)
 					if exists != -1 and exists:
-						print(exists)
 						sqlResult = adapter.remove_Media(someID)
 						if not sqlResult:
 							inChannelResponse(channel, removeItem.format(exists[0][4])) # TODO fix this to REMOVE, not update
