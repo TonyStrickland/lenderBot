@@ -46,6 +46,16 @@ def SELECT_ALL(tableName): # returns a list of lists
 
 	return GET(cmd)
 
+def SIMPLE_SELECT(tableName, whereColumn, whereCondition): # returns a list of lists
+	cmd = """
+		SELECT * 
+			FROM {0}
+		WHERE
+			{1} = {2};
+	""".format(tableName, whereColumn, whereCondition)
+
+	return GET(cmd)
+
 def SIMPLE_INSERT(tableName, column, value):
 	cmd = """
 		INSERT INTO 

@@ -167,5 +167,8 @@ def insert_Media(mediaInfo):
 def remove_Media(ID):
     return sql.SIMPLE_DELETE("Media", "ID", ID)
 
+def select_MediaID(ID):
+    return sql.SIMPLE_SELECT("Media", "ID", ID)
+
 def selectAll_Media():
     return sql.SELECT_ALL("Media")

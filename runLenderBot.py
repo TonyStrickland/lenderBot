@@ -58,6 +58,8 @@ what4 = "I have half a mind to send you to the Avatar of Mitra!"
 
 notEnough = "I can't add that, imbecile!"
 
+doesntExist = "HA HA HA! That doesn't exist!"
+
 notFound = "I couldn't find that! Perhaps it fell off a cliff."
 notFound2 = "Despite my best efforts, that has been lost to time."
 notFound3 = "That could not be found!"
@@ -156,7 +158,7 @@ def parseMedia_select(mediaInfo): # TODO update the selection parsing
 
 def parseMediaType_select(mediaInfo):
 	try:
-		result = "I will show you my types of media. \nTHEY MUST BE UNIQUE!\n"
+		result = "I will show you my many types of media.\n"
 		for i in mediaInfo:
 			for x, y in enumerate(i):
 				if x == 0:
@@ -180,7 +182,7 @@ def parseMediaType_update(mediaInfo):
 
 def parseMediaCategory_select(mediaInfo):
 	try:
-		result = "I will show you my categories. \nTHEY MUST BE UNIQUE!\n"
+		result = "I will show you my many categories of media!\n"
 		for i in mediaInfo:
 			for x, y in enumerate(i):
 				if x == 0:
@@ -208,15 +210,6 @@ def handle_command(command, channel, aUser, tStamp):
 	
 	command = command.lower()
 	response = None
-    
-	# if command == "!test":
-	# 	response = (("""Text:{0}
-	# 			Channel:{1}
-	# 			TS:{2}
-	# 			User:{3}
-	# 			""").format(command,channel,tStamp,aUser))
-	# 	inChannelResponse(channel,response)
-	# 	return
 	    
 	if command == "!fact":
 		# need to generate a random Conan fact
@@ -225,6 +218,32 @@ def handle_command(command, channel, aUser, tStamp):
 	if command == "!who":
 		inChannelResponse(channel, conanTells)
 		directResponse(aUser, aboutConan)
+		return
+
+	###############################
+	###   !allMediaCategories   ###
+	###############################
+
+	if command == "!allMediaCategories".lower():
+		if adapter.isDirect(channel):
+			allCategory = adapter.selectAll_MediaCategory()
+			parsed = parseMediaCategory_select(allCategory)
+			inChannelResponse(channel, parsed)
+			return
+		inChannelResponse(channel, notDirect)
+		return
+
+	##########################
+	###   !allMediaTypes   ###
+	##########################
+
+	if command == "!allMediaTypes".lower():
+		if adapter.isDirect(channel):
+			allCategory = adapter.selectAll_MediaType()
+			parsed = parseMediaType_select(allCategory)
+			inChannelResponse(channel, parsed)
+			return
+		inChannelResponse(channel, notDirect)
 		return
 
 	##########################
@@ -252,24 +271,6 @@ def handle_command(command, channel, aUser, tStamp):
 			return
 		inChannelResponse(channel, notAdmin)
 		return
-
-	##########################
-	###   !allMediaTypes   ###
-	##########################
-
-	if command == "!allMediaTypes".lower():
-		if adapter.isAdmin(aUser):
-			if adapter.isDirect(channel):
-				allCategory = adapter.selectAll_MediaType()
-				parsed = parseMediaType_select(allCategory)
-				inChannelResponse(channel, parsed)
-				return
-			inChannelResponse(channel, notDirect)
-			return
-		inChannelResponse(channel, notAdmin)
-		return
-
-	# update_MediaType
 
 	############################
 	###   !updateMediaType   ###
@@ -317,21 +318,6 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
-	###############################
-	###   !allMediaCategories   ###
-	###############################
-
-	if command == "!allMediaCategories".lower():
-		if adapter.isAdmin(aUser):
-			if adapter.isDirect(channel):
-				allCategory = adapter.selectAll_MediaCategory()
-				parsed = parseMediaCategory_select(allCategory)
-				inChannelResponse(channel, parsed)
-				return
-			inChannelResponse(channel, notDirect)
-			return
-		inChannelResponse(channel, notAdmin)
-		return
 	################################
 	###   !updateMediacategory   ###
 	################################
@@ -371,6 +357,32 @@ def handle_command(command, channel, aUser, tStamp):
 						inChannelResponse(channel, adding.format(mediaName))
 						return
 					inChannelResponse(channel, notEnough)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	########################
+	###   !removeMedia   ###
+	########################
+
+	if command.startswith("!removeMedia".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				someID = command[len("!removeMedia")+1:].strip().title()
+				if someID:
+					exists = adapter.select_MediaID(someID)
+					if exists != -1:
+						sqlResult = adapter.remove_Media(someID)
+						if not sqlResult:
+							inChannelResponse(channel, updateMediaCategory.format(someID)) # TODO fix this to REMOVE, not update
+							return
+						inChannelResponse(channel, notFound3)
+						return
+					inChannelResponse(channel, doesntExist)
 					return
 				inChannelResponse(channel, what)
 				return
