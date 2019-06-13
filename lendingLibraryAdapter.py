@@ -120,6 +120,9 @@ def insert_MediaCategory(newCategory):
 
 def remove_MediaCategory(ID):
     return sql.SIMPLE_DELETE("MediaCategory", "ID", ID)
+    
+def update_MediaCategory(ID, desc):
+    return sql.SIMPLE_UPDATE("MediaCategory", "Name", "'{}'".format(desc), "ID", ID)
 
 def selectAll_MediaCategory():
     return sql.SELECT_ALL("MediaCategory")
