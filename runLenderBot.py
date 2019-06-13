@@ -47,6 +47,7 @@ adding = """I'll add "{}" to the hoard!"""
 
 updateMediaType = """MediaType ID {} will now be set to "{}" """
 updateMediaCategory = """MediaCategory ID {} will now be set to "{}" """
+removeItem = """I'll make sure to throw "{}" to the wolves!"""
 
 notAdmin = "Only the powerful can use this command!"
 notDirect = "That is a DM only command, weakling!"
@@ -375,10 +376,11 @@ def handle_command(command, channel, aUser, tStamp):
 				someID = command[len("!removeMedia")+1:].strip().title()
 				if someID:
 					exists = adapter.select_MediaID(someID)
-					if exists != -1:
+					if exists != -1 and exists:
+						print(exists)
 						sqlResult = adapter.remove_Media(someID)
 						if not sqlResult:
-							inChannelResponse(channel, updateMediaCategory.format(someID)) # TODO fix this to REMOVE, not update
+							inChannelResponse(channel, removeItem.format(exists[0][4])) # TODO fix this to REMOVE, not update
 							return
 						inChannelResponse(channel, notFound3)
 						return
@@ -400,6 +402,10 @@ def handle_command(command, channel, aUser, tStamp):
 
 ##################################################################################################################################
 
+################
+###   Main   ###
+################
+
 if __name__ == "__main__":
 	if slack_client.rtm_connect(with_team_state=False):
 		print("Lenderbot is running!")
@@ -415,4 +421,5 @@ if __name__ == "__main__":
                 
 		time.sleep(RTM_READ_DELAY)
 	else:
+		pass
 		print("Connection failed. Exception traceback printed above.")
