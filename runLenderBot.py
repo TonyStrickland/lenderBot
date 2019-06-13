@@ -44,6 +44,7 @@ RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
 ###########################
 
 adding = """I'll add "{}" to the hoard!"""
+
 updateMediaType = """MediaType ID {} will now be set to "{}" """
 updateMediaCategory = """MediaCategory ID {} will now be set to "{}" """
 
@@ -274,25 +275,25 @@ def handle_command(command, channel, aUser, tStamp):
 	###   !updateMediaType   ###
 	############################
 
-	if command.startswith("!updateMediaType".lower()):
-		if adapter.isAdmin(aUser):
-			if adapter.isDirect(channel):
-				mediaInfo = command[len("!updateMediaType")+1:].strip().title()
-				if mediaInfo:
-					typeID, newType = parseMediaType_update(mediaInfo)
-					newType = newType.title()
-					sqlResult = adapter.update_MediaType(typeID, newType)
-					if not sqlResult:
-						inChannelResponse(channel, updateMediaType.format(typeID, newType))
-						return
-					inChannelResponse(channel, notFound3)
-					return
-				inChannelResponse(channel, what)
-				return
-			inChannelResponse(channel, notDirect)
-			return
-		inChannelResponse(channel, notAdmin)
-		return
+	# if command.startswith("!updateMediaType".lower()):
+	# 	if adapter.isAdmin(aUser):
+	# 		if adapter.isDirect(channel):
+	# 			mediaInfo = command[len("!updateMediaType")+1:].strip().title()
+	# 			if mediaInfo:
+	# 				typeID, newType = parseMediaType_update(mediaInfo)
+	# 				newType = newType.title()
+	# 				sqlResult = adapter.update_MediaType(typeID, newType)
+	# 				if not sqlResult:
+	# 					inChannelResponse(channel, updateMediaType.format(typeID, newType))
+	# 					return
+	# 				inChannelResponse(channel, notFound3)
+	# 				return
+	# 			inChannelResponse(channel, what)
+	# 			return
+	# 		inChannelResponse(channel, notDirect)
+	# 		return
+	# 	inChannelResponse(channel, notAdmin)
+	# 	return
 
 	#############################
 	###   !addMediaCategory   ###
@@ -335,25 +336,25 @@ def handle_command(command, channel, aUser, tStamp):
 	###   !updateMediacategory   ###
 	################################
 
-	if command.startswith("!updateMediacategory".lower()):
-		if adapter.isAdmin(aUser):
-			if adapter.isDirect(channel):
-				mediaInfo = command[len("!updateMediacategory")+1:].strip().title()
-				if mediaInfo:
-					typeID, newType = parseMediaCategory_update(mediaInfo)
-					newType = newType.title()
-					sqlResult = adapter.update_MediaCategory(typeID, newType)
-					if not sqlResult:
-						inChannelResponse(channel, updateMediaCategory.format(typeID, newType))
-						return
-					inChannelResponse(channel, notFound3)
-					return
-				inChannelResponse(channel, what)
-				return
-			inChannelResponse(channel, notDirect)
-			return
-		inChannelResponse(channel, notAdmin)
-		return
+	# if command.startswith("!updateMediacategory".lower()):
+	# 	if adapter.isAdmin(aUser):
+	# 		if adapter.isDirect(channel):
+	# 			mediaInfo = command[len("!updateMediacategory")+1:].strip().title()
+	# 			if mediaInfo:
+	# 				typeID, newType = parseMediaCategory_update(mediaInfo)
+	# 				newType = newType.title()
+	# 				sqlResult = adapter.update_MediaCategory(typeID, newType)
+	# 				if not sqlResult:
+	# 					inChannelResponse(channel, updateMediaCategory.format(typeID, newType))
+	# 					return
+	# 				inChannelResponse(channel, notFound3)
+	# 				return
+	# 			inChannelResponse(channel, what)
+	# 			return
+	# 		inChannelResponse(channel, notDirect)
+	# 		return
+	# 	inChannelResponse(channel, notAdmin)
+	# 	return
 
 	#####################
 	###   !addMedia   ###
