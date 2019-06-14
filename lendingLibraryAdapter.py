@@ -192,7 +192,9 @@ def selectAll_Media():
 
 def format_Media():
     cmd = """
-    SELECT m.FullName
+    SELECT 
+    m.ID
+    , m.FullName
     , mc.Name
     , mt.Description
     , CASE m.LongGame 
