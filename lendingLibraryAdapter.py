@@ -190,7 +190,7 @@ def select_MediaID(ID):
 def selectAll_Media():
     return sql.SELECT_ALL("Media")
 
-def format_Media():
+def format_Media(): #TODO add isCheckedOut to this
     cmd = """
     SELECT 
     m.ID
@@ -201,12 +201,12 @@ def format_Media():
         WHEN 1
             THEN 'Long'
             ELSE 'Short'
-        END as  Length
+        END as Length
     FROM Media as m
     JOIN 
     MediaCategory as mc 
         ON m.MediaCategory = mc.ID
     , MediaType as mt 
-	ON m.MediaType = mt.ID;"""
+	    ON m.MediaType = mt.ID;"""
 
     return sql.GET(cmd)
