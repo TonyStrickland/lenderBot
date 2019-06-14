@@ -150,9 +150,17 @@ def parseMedia_insert(mediaInfo):
 		return False # returns false
 	return insertString, theFullName
 
-def parseMedia_select(mediaInfo): # TODO update the selection parsing
+def parseMedia_select(mediaInfo): # TODO improve this to add 'checked out' 
 	try:
-		result = "Alow me to show you the hoard!\n"
+		result = "Allow me to show you the hoard!\n\n"
+		for item in mediaInfo:
+			theTitle = item[0]
+			theCategory = item [1]
+			theType = item [2]
+			theLength = item[3]
+
+			formatted = """Title: "{}"\tCategory: {}\tMedium: {}\tLength: {}""".format(theTitle, theCategory, theType, theLength)
+			result += formatted + "\n"
 	except: # if there aren't enough parts
 		return False # returns false
 	return result
@@ -242,6 +250,19 @@ def handle_command(command, channel, aUser, tStamp):
 		if adapter.isDirect(channel):
 			allCategory = adapter.selectAll_MediaType()
 			parsed = parseMediaType_select(allCategory)
+			inChannelResponse(channel, parsed)
+			return
+		inChannelResponse(channel, notDirect)
+		return
+
+	#####################
+	###   !allMedia   ###
+	#####################
+
+	if command == "!allMedia".lower():
+		if adapter.isDirect(channel):
+			allMedia = adapter.format_Media()
+			parsed = parseMedia_select(allMedia)
 			inChannelResponse(channel, parsed)
 			return
 		inChannelResponse(channel, notDirect)
@@ -344,22 +365,6 @@ def handle_command(command, channel, aUser, tStamp):
 	# 	return
 
 	#####################
-	###   !allMedia   ###
-	#####################
-
-	if command == "!allMedia".lower():
-		if adapter.isAdmin(aUser):
-			if adapter.isDirect(channel):
-				allMedia = adapter.selectAll_Media()
-				parsed = parseMediaCategory_select(allCategory)
-				inChannelResponse(channel, parsed)
-				return
-			inChannelResponse(channel, notDirect)
-			return
-		inChannelResponse(channel, notAdmin)
-		return
-
-	#####################
 	###   !addMedia   ###
 	#####################
 
@@ -395,7 +400,7 @@ def handle_command(command, channel, aUser, tStamp):
 					if exists != -1 and exists:
 						sqlResult = adapter.remove_Media(someID)
 						if not sqlResult:
-							inChannelResponse(channel, removeItem.format(exists[0][4])) # TODO fix this to REMOVE, not update
+							inChannelResponse(channel, removeItem.format(exists[0][4]))
 							return
 						inChannelResponse(channel, notFound3)
 						return

@@ -64,6 +64,23 @@ def isDirect(channelID):
 
     return fin
 
+def getSlackID(name):
+    cmd = """
+        SELECT 
+            slackID
+        FROM 
+            Users 
+        WHERE 
+            userName LIKE '{0}'
+    """.format(name)
+
+    try:
+        fin = sql.GET(cmd)[0][0]
+    except:
+        fin = 'No ID'
+
+    return fin
+
 ###########################
 ###   MediaType Table   ###
 ###########################
@@ -172,3 +189,22 @@ def select_MediaID(ID):
 
 def selectAll_Media():
     return sql.SELECT_ALL("Media")
+
+def format_Media():
+    cmd = """
+    SELECT m.FullName
+    , mc.Name
+    , mt.Description
+    , CASE m.LongGame 
+        WHEN 1
+            THEN 'Long'
+            ELSE 'Short'
+        END as  Length
+    FROM Media as m
+    JOIN 
+    MediaCategory as mc 
+        ON m.MediaCategory = mc.ID
+    , MediaType as mt 
+	ON m.MediaType = mt.ID;"""
+
+    return sql.GET(cmd)
