@@ -12,6 +12,7 @@ __pycache__/
 
 # databases
 *.db
+*.db-journal
 
 .vscode/
 
