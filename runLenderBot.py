@@ -69,6 +69,7 @@ conanTells = "Listen well and I shall tell you of who I am!"
 aboutConan = "<https://www.youtube.com/watch?v=mZHoHaAYHq8|Conan the Librarian>"
 
 cromHelp = "Crom helps those who help themselves."
+returnItem = "Crom helps those who help reshelve."
 
 ############################################################################
 ############################################################################
@@ -134,6 +135,34 @@ def checkReturn(someInt):
 		return 1
 	return someInt
 
+def parseInsult_select(mediaInfo):
+	try:
+		result = "This is how I speak to those who are unworthy.\n\n"
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "{}\t".format(y)
+				if x == 1:
+					result += "{}\n".format(y)
+
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
+def parseFact_select(mediaInfo):
+	try:
+		result = "Let me tell you of my many feats!\n\n"
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "{}\t".format(y)
+				if x == 1:
+					result += "{}\n".format(y)
+
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
 def parseMedia_insert(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 4)]
@@ -168,7 +197,7 @@ def parseMedia_select(mediaInfo): # TODO improve this to add 'checked out'
 
 def parseMediaType_select(mediaInfo):
 	try:
-		result = "I will show you my many types of media.\n"
+		result = "I will show you my many types of media.\n\n"
 		for i in mediaInfo:
 			for x, y in enumerate(i):
 				if x == 0:
@@ -192,7 +221,7 @@ def parseMediaType_update(mediaInfo):
 
 def parseMediaCategory_select(mediaInfo):
 	try:
-		result = "I will show you my many categories of media!\n"
+		result = "I will show you my many categories of media!\n\n"
 		for i in mediaInfo:
 			for x, y in enumerate(i):
 				if x == 0:
@@ -272,6 +301,38 @@ def handle_command(command, channel, aUser, tStamp):
 	##########################
 	###   ADMIN commands   ###
 	##########################
+
+	#####################
+	###   !allFacts   ###
+	#####################
+
+	if command == "!allFacts".lower():
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				allMedia = adapter.selectAll_Facts()
+				parsed = parseFact_select(allMedia)
+				inChannelResponse(channel, parsed)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	#######################
+	###   !allInsults   ###
+	#######################
+
+	if command == "!allInsults".lower():
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				allMedia = adapter.selectAll_Insults()
+				parsed = parseInsult_select(allMedia)
+				inChannelResponse(channel, parsed)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
 
 	#########################
 	###   !addMediaType   ###

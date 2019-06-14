@@ -81,6 +81,70 @@ def getSlackID(name):
 
     return fin
 
+#######################
+###   Facts Table   ###
+#######################
+
+# CREATE TABLE `Facts` (
+# `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+# `Line` TEXT NOT NULL UNIQUE 
+# );
+
+def selectAll_Facts():
+    return sql.SELECT_ALL("Facts")
+
+def remove_Facts(ID):
+    return sql.SIMPLE_DELETE("Facts", "ID", ID)
+
+def getFactByID(ID):
+    result = """
+    SELECT
+        Line
+    FROM
+        Facts
+    WHERE
+        ID = {0};
+    """.format(ID)
+
+    try:
+        fin = sql.GET(result)[0][0]
+    except:
+        fin = 0
+
+    return fin
+
+#########################
+###   Insults Table   ###
+#########################
+
+# CREATE TABLE `Insults` (
+# `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+# `Line` TEXT NOT NULL UNIQUE 
+# );
+
+def selectAll_Insults():
+    return sql.SELECT_ALL("Insults")
+
+def remove_Insults(ID):
+    return sql.SIMPLE_DELETE("Insults", "ID", ID)
+
+def getInsultByID(ID):
+    result = """
+    SELECT
+        Line
+    FROM
+        Insults
+    WHERE
+        ID = {0};
+    """.format(ID)
+
+    try:
+        fin = sql.GET(result)[0][0]
+    except:
+        fin = 0
+
+    return fin
+
 ###########################
 ###   MediaType Table   ###
 ###########################
