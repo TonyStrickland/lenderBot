@@ -90,6 +90,9 @@ def getSlackID(name):
 # `Line` TEXT NOT NULL UNIQUE 
 # );
 
+def insert_Fact(newType):
+    return sql.SIMPLE_INSERT("Facts", "Line", "'{}'".format(newType))
+
 def selectAll_Facts():
     return sql.SELECT_ALL("Facts")
 
@@ -121,6 +124,9 @@ def getFactByID(ID):
 # `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 # `Line` TEXT NOT NULL UNIQUE 
 # );
+
+def insert_Insult(newType):
+    return sql.SIMPLE_INSERT("Insults", "Line", "'{}'".format(newType))
 
 def selectAll_Insults():
     return sql.SELECT_ALL("Insults")
