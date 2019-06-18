@@ -431,7 +431,7 @@ def handle_command(command, channel, aUser, tStamp):
 				if len(mediaInfo) > 10:
 					sqlResult = adapter.insert_Fact(mediaInfo)
 					if not sqlResult:
-						inChannelResponse(channel,"""I had forgotten about that! I'll begin telling this tale when asked for more:\n{}""".format(mediaInfo))  # TODO set up add a fact
+						inChannelResponse(channel,"""I had forgotten about that! I'll begin telling this tale when asked for more:\n{}""".format(mediaInfo))
 						return
 					inChannelResponse(channel, notEnough)
 					return
