@@ -331,6 +331,75 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notDirect)
 		return
 
+	#######################
+	###   !CheckedOut   ###
+	#######################
+
+	if command == "!CheckedOut".lower():
+		if adapter.isDirect(channel):
+			allMedia = adapter.format_Media()
+			parsed = parseMedia_select(allMedia) # TODO calculate "checked out"
+			inChannelResponse(channel, parsed)
+			return
+		inChannelResponse(channel, notDirect)
+		return
+
+	#####################
+	###   !checkOut   ###
+	#####################
+
+	if command.startswith("!checkOut".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				someID = command[len("!checkOut")+1:].strip()
+				if someID:
+					exists = adapter.getFactByID(someID)
+					if exists != -1 and exists:
+						sqlResult = adapter.remove_Facts(someID)
+						if not sqlResult:
+							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkout! LIMIT 2!!
+							return
+						inChannelResponse(channel, notFound3)
+						return
+					inChannelResponse(channel, doesntExist)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	####################
+	###   !checkIn   ###
+	####################
+
+	if command.startswith("!checkIn".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				someID = command[len("!checkIn")+1:].strip()
+				if someID:
+					exists = adapter.getFactByID(someID)
+					if exists != -1 and exists:
+						sqlResult = adapter.remove_Facts(someID)
+						if not sqlResult:
+							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkIn!
+							return
+						inChannelResponse(channel, notFound3)
+						return
+					inChannelResponse(channel, doesntExist)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	###############################
+	###   END PUBLIC commands   ###
+	###############################
+
 	##########################
 	###   ADMIN commands   ###
 	##########################
@@ -496,7 +565,7 @@ def handle_command(command, channel, aUser, tStamp):
 				if len(mediaInfo) > 4 and len(mediaInfo) < 20:
 					sqlResult = adapter.insert_MediaCategory(mediaInfo)
 					if not sqlResult:
-						inChannelResponse(channel,"""I'll add "{}" to the categories of media! This pleases Ymir!""".format(mediaInfo))
+						inChannelResponse(channel,"""I'll add "{}" to the categories of media!""".format(mediaInfo))
 						return
 					inChannelResponse(channel, notEnough)
 					return
@@ -556,12 +625,65 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
-	######
-	return 
+	##########################
+	###   !adminCheckOut   ###
+	##########################
+
+	if command.startswith("!adminCheckOut".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				someID = command[len("!adminCheckOut")+1:].strip()
+				if someID:
+					exists = adapter.getFactByID(someID)
+					if exists != -1 and exists:
+						sqlResult = adapter.remove_Facts(someID)
+						if not sqlResult:
+							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkout!
+							return
+						inChannelResponse(channel, notFound3)
+						return
+					inChannelResponse(channel, doesntExist)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	#########################
+	###   !adminCheckIn   ###
+	#########################
+
+	if command.startswith("!adminCheckIn".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				someID = command[len("!adminCheckIn")+1:].strip()
+				if someID:
+					exists = adapter.getFactByID(someID)
+					if exists != -1 and exists:
+						sqlResult = adapter.remove_Facts(someID)
+						if not sqlResult:
+							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkIn!
+							return
+						inChannelResponse(channel, notFound3)
+						return
+					inChannelResponse(channel, doesntExist)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
 
 	##############################
-	###   End handle_command   ###
+	###   END ADMIN commands   ###
 	##############################
+
+	#####################################
+	return ###   END handle_command   ###
+	#####################################
 
 ##################################################################################################################################
 
