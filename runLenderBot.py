@@ -360,9 +360,9 @@ def handle_command(command, channel, aUser, tStamp):
 			if adapter.isDirect(channel):
 				mediaInfo = command[len("!addFact")+1:].strip().capitalize()
 				if len(mediaInfo) > 10:
-					sqlResult = adapter.insert_MediaType(mediaInfo)
+					sqlResult = adapter.insert_Fact(mediaInfo)
 					if not sqlResult:
-						inChannelResponse(channel,"""I'll add "{}" to the types of media carried by the backs of our enemies!""".format(mediaInfo))  # TODO set up add a fact
+						inChannelResponse(channel,"""I had forgotten about that! I'll begin telling this tale when asked for more:\n{}""".format(mediaInfo))  # TODO set up add a fact
 						return
 					inChannelResponse(channel, notEnough)
 					return
@@ -380,13 +380,13 @@ def handle_command(command, channel, aUser, tStamp):
 	if command.startswith("!removeFact".lower()):
 		if adapter.isAdmin(aUser):
 			if adapter.isDirect(channel):
-				someID = command[len("!removeFact")+1:].strip().title()
+				someID = command[len("!removeFact")+1:].strip()
 				if someID:
-					exists = adapter.select_MediaID(someID)
+					exists = adapter.getFactByID(someID)
 					if exists != -1 and exists:
-						sqlResult = adapter.remove_Media(someID)
+						sqlResult = adapter.remove_Facts(someID)
 						if not sqlResult:
-							inChannelResponse(channel, removeItem.format(exists[0][4])) ## TODO format this properly to remove Fact
+							inChannelResponse(channel, removeItem.format(exists)) ## TODO format this properly to remove Fact
 							return
 						inChannelResponse(channel, notFound3)
 						return
@@ -424,9 +424,9 @@ def handle_command(command, channel, aUser, tStamp):
 			if adapter.isDirect(channel):
 				mediaInfo = command[len("!addInsult")+1:].strip().capitalize()
 				if len(mediaInfo) > 10:
-					sqlResult = adapter.insert_MediaType(mediaInfo)
+					sqlResult = adapter.insert_Insult(mediaInfo)
 					if not sqlResult:
-						inChannelResponse(channel,"""I'll add "{}" to the types of media carried by the backs of our enemies!""".format(mediaInfo)) # TODO set up add an insult
+						inChannelResponse(channel,"""That's a good one! I'll make sure to remember to hurl this at those who displease me:\n{}""".format(mediaInfo)) # TODO set up add an insult
 						return
 					inChannelResponse(channel, notEnough)
 					return
@@ -444,13 +444,13 @@ def handle_command(command, channel, aUser, tStamp):
 	if command.startswith("!removeInsult".lower()):
 		if adapter.isAdmin(aUser):
 			if adapter.isDirect(channel):
-				someID = command[len("!removeInsult")+1:].strip().title()
+				someID = command[len("!removeInsult")+1:].strip()
 				if someID:
-					exists = adapter.select_MediaID(someID)
+					exists = adapter.getInsultByID(someID)
 					if exists != -1 and exists:
-						sqlResult = adapter.remove_Media(someID)
+						sqlResult = adapter.remove_Insults(someID)
 						if not sqlResult:
-							inChannelResponse(channel, removeItem.format(exists[0][4])) ## TODO format this properly to reomve Insult
+							inChannelResponse(channel, removeItem.format(exists)) ## TODO format this properly to reomve Insult
 							return
 						inChannelResponse(channel, notFound3)
 						return

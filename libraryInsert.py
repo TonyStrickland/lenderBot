@@ -7,6 +7,8 @@ def longGame(word):
 	return 0
 
 def addToDB(someFile):
+    fileOBJ = None
+
     try:
         fileOBJ = open(someFile,"r")
     except:
@@ -31,7 +33,6 @@ def addToDB(someFile):
             result = adapter.insert_Media(insertString)
             if result:
                 print("Error inserting: {}".format(insertString))
-                sys.exit()
             print("Inserting: {}".format(insertString))
 
         except:
