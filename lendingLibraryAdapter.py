@@ -1,5 +1,6 @@
 import databaseProvider as sql
 import sqlite3
+import datetime
 
 DATABASE = "data/lendingLibrary.db"
 # DATABASE = "lenderBot/data/lendingLibrary.db" # prod location
@@ -9,12 +10,12 @@ sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
 # Tony Strickland and I both need to be admins
 # List all items - show available, or not
-# list what's there
+# list what's there - DONE
 # list what's not - who's got it
 # allow a checkout/checkin
-# add/remove items from the library
-# categories, types, genres, owner
-# Video games, card games, etc
+# add/remove items from the library - DONE
+# categories, types, genres, owner - DONE
+# Video games, card games, etc - DONE
 
 ##################################################
 
@@ -260,6 +261,23 @@ def select_MediaID(ID):
 def selectAll_Media():
     return sql.SELECT_ALL("Media")
 
+def getMediaNameByID(ID):
+    result = """
+    SELECT
+        FullName
+    FROM
+        Media
+    WHERE
+        ID = {0};
+    """.format(ID)
+
+    try:
+        fin = sql.GET(result)[0][0]
+    except:
+        fin = 0
+
+    return fin
+
 def format_Media(): #TODO add isCheckedOut to this
     cmd = """
     SELECT 
@@ -277,6 +295,91 @@ def format_Media(): #TODO add isCheckedOut to this
     MediaCategory as mc 
         ON m.MediaCategory = mc.ID
     , MediaType as mt 
-	    ON m.MediaType = mt.ID;"""
+	    ON m.MediaType = mt.ID;
+    """
 
     return sql.GET(cmd)
+
+##############################
+###   Transactions Table   ###
+##############################
+
+# CREATE TABLE Transactions (
+# 'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+# 'MediaID' INTEGER NOT NULL, 
+# 'SlackID' TEXT NOT NULL, 
+# 'CheckIN' DATE, 
+# 'CheckOUT' DATE, 
+
+# FOREIGN KEY (MediaID) REFERENCES Media(ID), 
+# FOREIGN KEY (SlackID) REFERENCES Users(SlackID) 
+# );
+
+def tooManyOut(slackID):
+    cmd = """
+    SELECT COUNT(0) as numberOut
+    FROM Transactions as t
+    WHERE 
+        t.slackID = '{0}'
+        AND t.CheckIN is null;
+    """.format(slackID)
+
+    # out means AWAY
+
+    numOut = sql.GET(cmd)[0][0]
+    
+    if numOut >= 2: # if they have 2 or more items out, they'll need to talk to an admin
+        return True
+        
+    return False
+
+def isItemCheckedOut(mediaID):
+    cmd = """
+    SELECT COUNT(0) as numberOut
+    FROM Transactions as t
+    WHERE 
+        t.slackID = '{0}'
+        AND t.CheckIN is null;
+    """.format(mediaID)
+
+    numOut = sql.GET(cmd)[0][0]
+    
+    if numOut >= 2:
+        return True
+        
+    return False
+
+def CheckIN(mediaID, slackID):
+    # datetime('now','localtime')
+    return
+
+def CheckOUT(mediaID, slackID):
+    if tooManyOut(slackID):
+        return 4
+    
+    cmd = """
+    INSERT INTO 
+    Transactions
+    (MediaID, SlackID, CheckOUT)
+    values
+    ({0},'{1}', datetime('now','localtime'));
+    """.format(mediaID, slackID)
+
+    return sql.EXEC(cmd)
+
+def adminCheckIN(mediaID):
+    # datetime('now','localtime')
+    
+    return
+
+def adminCheckOUT(mediaID, slackID):
+    # datetime('now','localtime')
+    cmd = """
+    INSERT INTO 
+    Transactions
+    (MediaID, SlackID, CheckIN)
+    values
+    ({0},'{1}', datetime('now','localtime'));
+    """.format(mediaID, slackID)
+
+    return sql.EXEC(cmd)
