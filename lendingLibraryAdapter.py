@@ -394,7 +394,7 @@ def adminCheckIN(mediaID):
     return sql.EXEC(cmd)
 
 def adminCheckOUT(mediaID, slackID):
-    if isItemCheckedOut(mediaID): # can't check out something twice
+    if isItemCheckedOut(mediaID): # can't check out something twice ... I hope
         return 5
 
     cmd = """

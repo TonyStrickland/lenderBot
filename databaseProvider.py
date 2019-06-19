@@ -21,6 +21,7 @@ def EXEC(sqlCmd): # fetches data from the database
 
 	except:
 		return 9
+
 	finally:
 		someCursor.close()
 
@@ -108,18 +109,3 @@ def SIMPLE_DELETE(tableName, whereColumn, whereCondition):
 	""".format(tableName, whereColumn, whereCondition)
 
 	return EXEC(cmd)
-
-#################################
-###   Parameterized Queries   ###
-#################################
-
-# # example 1 -- simple placeholders
-# db.execute('update players set name=?, score=?, active=? where jerseyNum=?', ('Smith, Steve', 42, True, 99))
- 
-# # example 2 -- named placeholders
-# db.execute('update players set name=:name, score=:score, active=:active where jerseyNum=:num',
-#     {'num': 100,
-#      'name': 'John Doe',
-#      'active': False,
-#      'score': -1}
-# )

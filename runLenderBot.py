@@ -15,8 +15,24 @@ from slackclient import SlackClient
 ###   TODO List   ###
 #####################
 
-# update to the 2.x version and python3
+# update to the 2.X version and python3.7
 # https://github.com/slackapi/python-slackclient/wiki/Migrating-to-2.x#basic-usage-of-the-rtm-client
+
+
+#################################
+###   Parameterized Queries   ###
+#################################
+
+# # example 1 -- simple placeholders
+# db.execute('update players set name=?, score=?, active=? where jerseyNum=?', ('Smith, Steve', 42, True, 99))
+ 
+# # example 2 -- named placeholders
+# db.execute('update players set name=:name, score=:score, active=:active where jerseyNum=:num',
+#     {'num': 100,
+#      'name': 'John Doe',
+#      'active': False,
+#      'score': -1}
+# )
 
 ###############################
 ###   Get the slack token   ###
@@ -38,6 +54,8 @@ templateID = None
 
 # CONSTANTS
 RTM_READ_DELAY = 0.5 # 0.5 second delay in reading events
+
+CURATOR = "<@UC1LT08SX>" # Tony Strickland's ID
 
 ###########################
 ###   Snarky Comments   ###
@@ -70,6 +88,9 @@ aboutConan = "<https://www.youtube.com/watch?v=mZHoHaAYHq8|Conan the Librarian>"
 
 cromHelp = "Crom helps those who help themselves."
 returnItem = "Crom helps those who help reshelve."
+
+checkedOUT = "That has been taken already! Are you sure that was correct?"
+tooManyOut = "You have taken too much of the hoard! You'll need to speak to Curator {} to take more.".format(CURATOR)
 
 ############################################################################
 ############################################################################
@@ -244,6 +265,10 @@ def parseMediaCategory_update(mediaInfo):
 	return typeID, newType
 
 ##################################################################################################################################
+
+################################
+###   BEGIN handle_command   ###
+################################
 
 def handle_command(command, channel, aUser, tStamp):
 	
@@ -681,9 +706,9 @@ def handle_command(command, channel, aUser, tStamp):
 	###   END ADMIN commands   ###
 	##############################
 
-	#####################################
-	return ###   END handle_command   ###
-	#####################################
+	#######################################
+	return   ###   END handle_command   ###
+	#######################################
 
 ##################################################################################################################################
 
