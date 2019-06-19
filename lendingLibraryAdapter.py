@@ -278,7 +278,7 @@ def getMediaNameByID(ID):
 
     return fin
 
-def format_Media(): #TODO add isCheckedOut to this
+def format_Media(): # TODO add isCheckedOut to this
     cmd = """
     SELECT 
     m.ID
@@ -320,11 +320,9 @@ def tooManyOut(slackID):
     SELECT COUNT(0) as numberOut
     FROM Transactions as t
     WHERE 
-        t.slackID = '{0}'
+        t.SlackID = '{0}'
         AND t.CheckIN is null;
     """.format(slackID)
-
-    # out means AWAY
 
     numOut = sql.GET(cmd)[0][0]
     
@@ -338,47 +336,72 @@ def isItemCheckedOut(mediaID):
     SELECT COUNT(0) as numberOut
     FROM Transactions as t
     WHERE 
-        t.slackID = '{0}'
+        t.MediaID = '{0}'
         AND t.CheckIN is null;
     """.format(mediaID)
 
     numOut = sql.GET(cmd)[0][0]
     
-    if numOut >= 2:
+    if numOut >= 1: # can't check ou an item twice... I hope
         return True
         
     return False
 
-def CheckIN(mediaID, slackID):
-    # datetime('now','localtime')
-    return
+def CheckIN(mediaID):
+    if isItemCheckedOut(mediaID): # if this doesn't work, you'll need an admin
+        return 7
+
+    cmd = """
+    UPDATE 
+    Transactions
+    SET
+    CheckIN = datetime('now','localtime')
+    WHERE
+    MediaID = {0}
+    AND CheckIN is null;
+    """.format(mediaID)
+
+    return sql.EXEC(cmd)
 
 def CheckOUT(mediaID, slackID):
-    if tooManyOut(slackID):
+    if isItemCheckedOut(mediaID): # can't check out something twice
+        return 5
+
+    if tooManyOut(slackID): # can only check out a cuople of items
         return 4
-    
+
     cmd = """
     INSERT INTO 
     Transactions
     (MediaID, SlackID, CheckOUT)
-    values
+    VALUES
     ({0},'{1}', datetime('now','localtime'));
     """.format(mediaID, slackID)
 
     return sql.EXEC(cmd)
 
 def adminCheckIN(mediaID):
-    # datetime('now','localtime')
-    
-    return
+    cmd = """
+    UPDATE 
+    Transactions
+    SET
+    CheckIN = datetime('now','localtime')
+    WHERE
+    MediaID = {0}
+    AND CheckIN is null;
+    """.format(mediaID)
+
+    return sql.EXEC(cmd)
 
 def adminCheckOUT(mediaID, slackID):
-    # datetime('now','localtime')
+    if isItemCheckedOut(mediaID): # can't check out something twice
+        return 5
+
     cmd = """
     INSERT INTO 
     Transactions
     (MediaID, SlackID, CheckIN)
-    values
+    VALUES
     ({0},'{1}', datetime('now','localtime'));
     """.format(mediaID, slackID)
 
