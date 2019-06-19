@@ -278,7 +278,7 @@ def getMediaNameByID(ID):
 
     return fin
 
-def format_Media(): # TODO add isCheckedOut to this
+def format_Media():
     cmd = """
     SELECT 
     m.ID
@@ -290,6 +290,17 @@ def format_Media(): # TODO add isCheckedOut to this
             THEN 'Long'
             ELSE 'Short'
         END as Length
+	, CASE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+            WHERE 
+                t.MediaID = m.ID
+                AND t.CheckIN is null
+            )
+        WHEN 0
+            THEN 'Available'
+            ELSE 'Checked Out'
+        END	as Available
     FROM Media as m
     JOIN 
     MediaCategory as mc 

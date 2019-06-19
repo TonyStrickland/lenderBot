@@ -209,8 +209,9 @@ def parseMedia_select(mediaInfo): # TODO improve this to add 'checked out'
 			theCategory = item [2]
 			theType = item [3]
 			theLength = item[4]
+			isThere = item[5]
 
-			formatted = """{}: Title: "{}"\tCategory: {}\tMedium: {}\tLength: {}""".format(theID, theTitle, theCategory, theType, theLength)
+			formatted = """{}: Title: "{}"\tCategory: {}\tMedium: {}\tLength: {} - {}""".format(theID, theTitle, theCategory, theType, theLength, isThere)
 			result += formatted + "\n"
 	except: # if there aren't enough parts
 		return False # returns false
