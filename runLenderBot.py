@@ -217,6 +217,23 @@ def parseMedia_select(mediaInfo): # TODO improve this to add 'checked out'
 		return False # returns false
 	return result
 
+def parseMedia_WhosGotIt(mediaInfo): # TODO improve this to add 'checked out' 
+	try:
+		result = "Allow me to show you the hoard!\n\n"
+		for item in mediaInfo:
+			theID = item[0]
+			theTitle = item[1]
+			theCategory = item [2]
+			theType = item [3]
+			theLength = item[4]
+			isThere = item[5]
+
+			formatted = """{}: Title: "{}"\tCategory: {}\tMedium: {}\tLength: {} - {}""".format(theID, theTitle, theCategory, theType, theLength, isThere)
+			result += formatted + "\n"
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
 def parseMediaType_select(mediaInfo):
 	try:
 		result = "I will show you my many types of media.\n\n"
@@ -697,6 +714,22 @@ def handle_command(command, channel, aUser, tStamp):
 					inChannelResponse(channel, doesntExist)
 					return
 				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	######################
+	###   !whoTookIt   ###
+	######################
+
+	if command == "!whoTookIt".lower():
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				allMedia = adapter.format_Media_WhosGotIt()
+				parsed = parseMedia_WhosGotIt(allMedia)
+				inChannelResponse(channel, parsed)
 				return
 			inChannelResponse(channel, notDirect)
 			return
