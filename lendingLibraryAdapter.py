@@ -311,6 +311,86 @@ def format_Media():
 
     return sql.GET(cmd)
 
+def format_Media_Available():
+    cmd = """
+    SELECT 
+    m.ID
+    , m.FullName
+    , mc.Name
+    , mt.Description
+    , CASE m.LongGame 
+        WHEN 1
+            THEN 'Long'
+            ELSE 'Short'
+        END as Length
+	, CASE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+            WHERE 
+                t.MediaID = m.ID
+                AND t.CheckIN is null
+            )
+        WHEN 0
+            THEN 'Available'
+            ELSE 'Checked Out'
+        END	as Available
+    FROM Media as m
+    JOIN 
+    MediaCategory as mc 
+        ON m.MediaCategory = mc.ID
+    , MediaType as mt 
+	    ON m.MediaType = mt.ID
+	WHERE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+            WHERE 
+                t.MediaID = m.ID
+                AND t.CheckIN is null
+            ) = 0;
+    """
+
+    return sql.GET(cmd)
+
+def format_Media_CheckedOut():
+    cmd = """
+    SELECT 
+    m.ID
+    , m.FullName
+    , mc.Name
+    , mt.Description
+    , CASE m.LongGame 
+        WHEN 1
+            THEN 'Long'
+            ELSE 'Short'
+        END as Length
+	, CASE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+            WHERE 
+                t.MediaID = m.ID
+                AND t.CheckIN is null
+            )
+        WHEN 0
+            THEN 'Available'
+            ELSE 'Checked Out'
+        END	as Available
+    FROM Media as m
+    JOIN 
+    MediaCategory as mc 
+        ON m.MediaCategory = mc.ID
+    , MediaType as mt 
+	    ON m.MediaType = mt.ID
+	WHERE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+            WHERE 
+                t.MediaID = m.ID
+                AND t.CheckIN is null
+            ) > 0;
+    """
+
+    return sql.GET(cmd)
+
 ##############################
 ###   Transactions Table   ###
 ##############################
