@@ -338,7 +338,7 @@ def handle_command(command, channel, aUser, tStamp):
 	if command == "!everything".lower():
 		if adapter.isDirect(channel):
 			allMedia = adapter.format_Media()
-			parsed = parseMedia_select(allMedia) # TODO add "checked out"
+			parsed = parseMedia_select(allMedia)
 			inChannelResponse(channel, parsed)
 			return
 		inChannelResponse(channel, notDirect)
@@ -350,8 +350,8 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command == "!available".lower():
 		if adapter.isDirect(channel):
-			allMedia = adapter.format_Media()
-			parsed = parseMedia_select(allMedia) # TODO calculate "checked out"
+			allMedia = adapter.format_Media_Available()
+			parsed = parseMedia_select(allMedia)
 			inChannelResponse(channel, parsed)
 			return
 		inChannelResponse(channel, notDirect)

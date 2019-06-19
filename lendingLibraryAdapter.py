@@ -383,10 +383,37 @@ def format_Media_CheckedOut():
 	WHERE (
         SELECT COUNT(0) as numberOut
         FROM Transactions as t
-            WHERE 
-                t.MediaID = m.ID
-                AND t.CheckIN is null
-            ) > 0;
+        WHERE 
+            t.MediaID = m.ID
+            AND t.CheckIN is null
+        ) > 0;
+    """
+
+    return sql.GET(cmd)
+
+def format_Media_WhosGotIt():
+    cmd = """
+    SELECT 
+    m.ID
+    , m.FullName
+    , u.userName
+	, t.checkOUT
+    FROM Media as m,
+	Transactions as t
+    JOIN 
+    MediaCategory as mc 
+        ON m.MediaCategory = mc.ID
+    , MediaType as mt 
+	    ON m.MediaType = mt.ID
+	, Users as u
+		ON u.slackID = t.slackID
+	WHERE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+        WHERE 
+            t.MediaID = m.ID
+            AND t.CheckIN is null
+        ) > 0;
     """
 
     return sql.GET(cmd)
