@@ -89,8 +89,13 @@ aboutConan = "<https://www.youtube.com/watch?v=mZHoHaAYHq8|Conan the Librarian>"
 cromHelp = "Crom helps those who help themselves."
 returnItem = "Crom helps those who help reshelve."
 
-checkedOUT = "That has been taken already! Are you sure that was correct?"
+checkedOUT = """It seems "{}" has been taken already! Are you sure that was correct?"""
 tooManyOut = "You have taken too much of the hoard! You'll need to speak to Curator {} to take more.".format(CURATOR)
+takeIt = """I'll let you borrow "{}" for a time."""
+bringIt = """I'm glad you brought "{}" back! I was beginning to think I would need to hunt you down!"""
+
+notTaken = """No one has borrowed "{}." Perhaps you should strike first, and take it!"""
+adminCheckOut = """Alright! I'll let {} borrow "{}" ... for a time."""
 
 ############################################################################
 ############################################################################
@@ -184,13 +189,16 @@ def parseFact_select(mediaInfo):
 		return False # returns false
 	return result
 
+def sanitizeID(slackID):
+	return slackID.replace('<','').replace('>','').replace('@','').upper()
+
 def parseMedia_insert(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 4)]
 
 		theMediaType = adapter.get_MediaTypeID(stripper[0])
 		theMediaCategory = adapter.get_MediaCategoryID(stripper[1])
-		theUser = stripper[2].replace('<','').replace('>','').replace('@','').upper()
+		theUser = sanitizeID(stripper[2])
 		isLong = longGame(stripper[3])
 		theFullName = stripper[4]
 
@@ -200,7 +208,7 @@ def parseMedia_insert(mediaInfo):
 		return False # returns false
 	return insertString, theFullName
 
-def parseMedia_select(mediaInfo): # TODO improve this to add 'checked out' 
+def parseMedia_select(mediaInfo):
 	try:
 		result = "Allow me to show you the hoard!\n\n"
 		for item in mediaInfo:
@@ -217,18 +225,16 @@ def parseMedia_select(mediaInfo): # TODO improve this to add 'checked out'
 		return False # returns false
 	return result
 
-def parseMedia_WhosGotIt(mediaInfo): # TODO improve this to add 'checked out' 
+def parseMedia_WhosGotIt(mediaInfo):
 	try:
-		result = "Allow me to show you the hoard!\n\n"
+		result = "I'll tell you who took it!\n\n"
 		for item in mediaInfo:
 			theID = item[0]
 			theTitle = item[1]
-			theCategory = item [2]
-			theType = item [3]
-			theLength = item[4]
-			isThere = item[5]
+			theUser = item [2]
+			theTime = item [3]
 
-			formatted = """{}: Title: "{}"\tCategory: {}\tMedium: {}\tLength: {} - {}""".format(theID, theTitle, theCategory, theType, theLength, isThere)
+			formatted = """ID {}: Title: "{}"\tUser: {}\tTime: {}""".format(theID, theTitle, theUser, theTime)
 			result += formatted + "\n"
 	except: # if there aren't enough parts
 		return False # returns false
@@ -282,6 +288,16 @@ def parseMediaCategory_update(mediaInfo):
 		return False # returns false
 	return typeID, newType
 
+def parseAdminCheckout(mediaInfo):
+	try:
+		stripper = [x.strip() for x in mediaInfo.split(',', 1)]
+		mediaID = stripper[0]
+		slackID = stripper[1]
+
+	except: # if there aren't enough parts
+		return False # returns false
+	return mediaID, slackID
+
 ##################################################################################################################################
 
 ################################
@@ -317,7 +333,7 @@ def handle_command(command, channel, aUser, tStamp):
 	###   !who   ###
 	################
 
-	if command == "!who":
+	if command == "!conan":
 		inChannelResponse(channel, conanTells)
 		directResponse(aUser, aboutConan)
 		return
@@ -374,19 +390,6 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notDirect)
 		return
 
-	#######################
-	###   !CheckedOut   ###
-	#######################
-
-	if command == "!CheckedOut".lower():
-		if adapter.isDirect(channel):
-			allMedia = adapter.format_Media()
-			parsed = parseMedia_select(allMedia) # TODO calculate "checked out"
-			inChannelResponse(channel, parsed)
-			return
-		inChannelResponse(channel, notDirect)
-		return
-
 	#####################
 	###   !checkOut   ###
 	#####################
@@ -396,13 +399,13 @@ def handle_command(command, channel, aUser, tStamp):
 			if adapter.isDirect(channel):
 				someID = command[len("!checkOut")+1:].strip()
 				if someID:
-					exists = adapter.getFactByID(someID)
+					exists = adapter.getMediaNameByID(someID)
 					if exists != -1 and exists:
-						sqlResult = adapter.remove_Facts(someID)
+						sqlResult = adapter.Media_CheckOUT(someID, aUser)
 						if not sqlResult:
-							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkout! LIMIT 2!!
+							inChannelResponse(channel, takeIt.format(exists))
 							return
-						inChannelResponse(channel, notFound3)
+						inChannelResponse(channel, checkedOUT.format(exists))
 						return
 					inChannelResponse(channel, doesntExist)
 					return
@@ -422,13 +425,13 @@ def handle_command(command, channel, aUser, tStamp):
 			if adapter.isDirect(channel):
 				someID = command[len("!checkIn")+1:].strip()
 				if someID:
-					exists = adapter.getFactByID(someID)
+					exists = adapter.getMediaNameByID(someID)
 					if exists != -1 and exists:
-						sqlResult = adapter.remove_Facts(someID)
+						sqlResult = adapter.Media_CheckIN(someID)
 						if not sqlResult:
-							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkIn!
+							inChannelResponse(channel, bringIt.format(exists))
 							return
-						inChannelResponse(channel, notFound3)
+						inChannelResponse(channel, notTaken.format(exists))
 						return
 					inChannelResponse(channel, doesntExist)
 					return
@@ -649,7 +652,7 @@ def handle_command(command, channel, aUser, tStamp):
 	if command.startswith("!removeMedia".lower()):
 		if adapter.isAdmin(aUser):
 			if adapter.isDirect(channel):
-				someID = command[len("!removeMedia")+1:].strip().title()
+				someID = command[len("!removeMedia")+1:].strip()
 				if someID:
 					exists = adapter.select_MediaID(someID)
 					if exists != -1 and exists:
@@ -675,17 +678,17 @@ def handle_command(command, channel, aUser, tStamp):
 	if command.startswith("!adminCheckOut".lower()):
 		if adapter.isAdmin(aUser):
 			if adapter.isDirect(channel):
-				someID = command[len("!adminCheckOut")+1:].strip()
-				if someID:
-					exists = adapter.getFactByID(someID)
-					if exists != -1 and exists:
-						sqlResult = adapter.remove_Facts(someID)
-						if not sqlResult:
-							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkout!
-							return
-						inChannelResponse(channel, notFound3)
+				mediaInfo = command[len("!adminCheckOut")+1:].strip()
+				if mediaInfo:
+					mID, sID = parseAdminCheckout(mediaInfo)
+					sanatary = sanitizeID(sID)
+					sqlResult = adapter.Media_CheckOUT(mID, sanatary)
+					print(sqlResult)
+					if not sqlResult:
+						mName = adapter.getMediaNameByID(mID)
+						inChannelResponse(channel, adminCheckOut.format(sID, mName))
 						return
-					inChannelResponse(channel, doesntExist)
+					inChannelResponse(channel, notEnough)
 					return
 				inChannelResponse(channel, what)
 				return

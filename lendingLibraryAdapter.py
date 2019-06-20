@@ -398,22 +398,18 @@ def format_Media_WhosGotIt():
     , m.FullName
     , u.userName
 	, t.checkOUT
-    FROM Media as m,
-	Transactions as t
+    FROM Media as m JOIN
+        (SELECT t.mediaID
+        , t.checkout
+        , t.slackID
+            FROM Transactions as t
+            WHERE 
+            t.CheckIN is null
+            ) as t
+		ON m.ID = t.mediaID
     JOIN 
-    MediaCategory as mc 
-        ON m.MediaCategory = mc.ID
-    , MediaType as mt 
-	    ON m.MediaType = mt.ID
-	, Users as u
-		ON u.slackID = t.slackID
-	WHERE (
-        SELECT COUNT(0) as numberOut
-        FROM Transactions as t
-        WHERE 
-            t.MediaID = m.ID
-            AND t.CheckIN is null
-        ) > 0;
+    Users as u
+		ON u.slackID = t.slackID;
     """
 
     return sql.GET(cmd)
@@ -454,19 +450,19 @@ def isItemCheckedOut(mediaID):
     SELECT COUNT(0) as numberOut
     FROM Transactions as t
     WHERE 
-        t.MediaID = '{0}'
+        t.MediaID = {0}
         AND t.CheckIN is null;
     """.format(mediaID)
 
     numOut = sql.GET(cmd)[0][0]
     
-    if numOut >= 1: # can't check ou an item twice... I hope
+    if int(numOut) >= 1: # can't check ou an item twice... I hope
         return True
         
     return False
 
-def CheckIN(mediaID):
-    if isItemCheckedOut(mediaID): # if this doesn't work, you'll need an admin
+def Media_CheckIN(mediaID):
+    if not isItemCheckedOut(mediaID): # if this doesn't work, you'll need an admin
         return 7
 
     cmd = """
@@ -481,7 +477,7 @@ def CheckIN(mediaID):
 
     return sql.EXEC(cmd)
 
-def CheckOUT(mediaID, slackID):
+def Media_CheckOUT(mediaID, slackID):
     if isItemCheckedOut(mediaID): # can't check out something twice
         return 5
 
@@ -498,7 +494,7 @@ def CheckOUT(mediaID, slackID):
 
     return sql.EXEC(cmd)
 
-def adminCheckIN(mediaID):
+def Media_adminCheckIN(mediaID):
     cmd = """
     UPDATE 
     Transactions
@@ -511,7 +507,7 @@ def adminCheckIN(mediaID):
 
     return sql.EXEC(cmd)
 
-def adminCheckOUT(mediaID, slackID):
+def Media_adminCheckOUT(mediaID, slackID):
     if isItemCheckedOut(mediaID): # can't check out something twice ... I hope
         return 5
 
