@@ -192,6 +192,9 @@ def parseFact_select(mediaInfo):
 def sanitizeID(slackID):
 	return slackID.replace('<','').replace('>','').replace('@','').upper()
 
+def reconstituteName(slackID):
+	return "<{}>".format(slackID)
+
 def parseMedia_insert(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 4)]
@@ -395,25 +398,22 @@ def handle_command(command, channel, aUser, tStamp):
 	#####################
 
 	if command.startswith("!checkOut".lower()):
-		if adapter.isAdmin(aUser):
-			if adapter.isDirect(channel):
-				someID = command[len("!checkOut")+1:].strip()
-				if someID:
-					exists = adapter.getMediaNameByID(someID)
-					if exists != -1 and exists:
-						sqlResult = adapter.Media_CheckOUT(someID, aUser)
-						if not sqlResult:
-							inChannelResponse(channel, takeIt.format(exists))
-							return
-						inChannelResponse(channel, checkedOUT.format(exists))
+		if adapter.isDirect(channel):
+			someID = command[len("!checkOut")+1:].strip()
+			if someID:
+				exists = adapter.getMediaNameByID(someID)
+				if exists != -1 and exists:
+					sqlResult = adapter.Media_CheckOUT(someID, aUser)
+					if not sqlResult:
+						inChannelResponse(channel, takeIt.format(exists))
 						return
-					inChannelResponse(channel, doesntExist)
+					inChannelResponse(channel, checkedOUT.format(exists))
 					return
-				inChannelResponse(channel, what)
+				inChannelResponse(channel, doesntExist)
 				return
-			inChannelResponse(channel, notDirect)
+			inChannelResponse(channel, what)
 			return
-		inChannelResponse(channel, notAdmin)
+		inChannelResponse(channel, notDirect)
 		return
 
 	####################
@@ -421,25 +421,25 @@ def handle_command(command, channel, aUser, tStamp):
 	####################
 
 	if command.startswith("!checkIn".lower()):
-		if adapter.isAdmin(aUser):
-			if adapter.isDirect(channel):
-				someID = command[len("!checkIn")+1:].strip()
-				if someID:
-					exists = adapter.getMediaNameByID(someID)
-					if exists != -1 and exists:
-						sqlResult = adapter.Media_CheckIN(someID)
-						if not sqlResult:
-							inChannelResponse(channel, bringIt.format(exists))
+		if adapter.isDirect(channel):
+			someID = command[len("!checkIn")+1:].strip()
+			if someID:
+				exists = adapter.getMediaNameByID(someID)
+				if exists != -1 and exists:
+					sqlResult = adapter.Media_CheckIN(someID) # TODO a check to make sure THEY took it last!!!!
+					if sqlResult == 5:
+							inChannelResponse(channel, checkedOUT.format(exists))
 							return
-						inChannelResponse(channel, notTaken.format(exists))
+					if not sqlResult:
+						inChannelResponse(channel, bringIt.format(exists))
 						return
-					inChannelResponse(channel, doesntExist)
+					inChannelResponse(channel, notTaken.format(exists))
 					return
-				inChannelResponse(channel, what)
+				inChannelResponse(channel, doesntExist)
 				return
-			inChannelResponse(channel, notDirect)
+			inChannelResponse(channel, what)
 			return
-		inChannelResponse(channel, notAdmin)
+		inChannelResponse(channel, notDirect)
 		return
 
 	###############################
@@ -681,12 +681,18 @@ def handle_command(command, channel, aUser, tStamp):
 				mediaInfo = command[len("!adminCheckOut")+1:].strip()
 				if mediaInfo:
 					mID, sID = parseAdminCheckout(mediaInfo)
-					sanatary = sanitizeID(sID)
-					sqlResult = adapter.Media_CheckOUT(mID, sanatary)
-					print(sqlResult)
-					if not sqlResult:
-						mName = adapter.getMediaNameByID(mID)
-						inChannelResponse(channel, adminCheckOut.format(sID, mName))
+					exists = adapter.getMediaNameByID(mID)
+					if exists:
+						sanatary = sanitizeID(sID)
+						sqlResult = adapter.Media_adminCheckOUT(mID, sanatary)
+						if sqlResult == 5:
+							inChannelResponse(channel, checkedOUT.format(exists))
+							return
+						if not sqlResult:
+							sName = reconstituteName(sID)
+							inChannelResponse(channel, adminCheckOut.format(sName, exists))
+							return
+						inChannelResponse(channel, doesntExist)
 						return
 					inChannelResponse(channel, notEnough)
 					return

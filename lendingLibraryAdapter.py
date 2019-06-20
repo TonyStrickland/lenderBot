@@ -461,7 +461,7 @@ def isItemCheckedOut(mediaID):
         
     return False
 
-def Media_CheckIN(mediaID):
+def Media_CheckIN(mediaID, slackID):
     if not isItemCheckedOut(mediaID): # if this doesn't work, you'll need an admin
         return 7
 
@@ -514,7 +514,7 @@ def Media_adminCheckOUT(mediaID, slackID):
     cmd = """
     INSERT INTO 
     Transactions
-    (MediaID, SlackID, CheckIN)
+    (MediaID, SlackID, CheckOUT)
     VALUES
     ({0},'{1}', datetime('now','localtime'));
     """.format(mediaID, slackID)
