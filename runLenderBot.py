@@ -38,8 +38,7 @@ from slackclient import SlackClient
 ###   Get the slack token   ###
 ###############################
 
-de.MAIN_KEY = "data/lenderBot"
-# de.MAIN_KEY = "lenderBot/data/lenderBot" # prod location
+de.MAIN_KEY = "lenderBot/data/lenderBot" # prod location
 slack_client = SlackClient(de.getToken())
 
 ###############################
@@ -86,7 +85,10 @@ notFound3 = "That could not be found!"
 conanTells = "Listen well and I shall tell you of who I am!"
 aboutConan = "<https://www.youtube.com/watch?v=mZHoHaAYHq8|Conan the Librarian>"
 
-cromHelp = "Crom helps those who help themselves."
+publicHelp = "<https://drive.google.com/open?id=1kwWW0AzoOgjV9OGjfkJV4ah8ejZY81DMImyTRwMmxmI|Help Scroll>"
+adminHelp = "<https://drive.google.com/open?id=1H_CUyR7JDUvfGD6lkhtbuM1gWW9dghePxlphyFVOhDs|Admin Help Scroll>"
+
+cromHelp = "Crom helps those who help themselves. I send you help scrolls!"
 returnItem = "Crom helps those who help reshelve."
 
 checkedOUT = """It seems "{}" has been taken already! Are you sure that was correct?"""
@@ -96,9 +98,13 @@ bringIt = """I'm glad you brought "{}" back! I was beginning to think I would ne
 
 notTaken = """No one has borrowed "{}". Perhaps you should strike first, and take it!"""
 adminCheckOut = """Alright! I'll let {} borrow "{}" ... for a time."""
+adminCheckIN = """I'll put "{}" back in the hoard!"""
 
 notYou = """You didn't check out "{}"!"""
 noGreed = "Stop being greedy! You have borrowed enough of my hoard!"
+
+correctCheckOUT = "HA HA HA! That's wrong! Try !checkOUT[SPACE]##"
+correctCheckIN = "HA HA HA! That's wrong! Try !checkIN[SPACE]##"
 
 ############################################################################
 ############################################################################
@@ -284,12 +290,12 @@ def parseMediaCategory_select(mediaInfo):
 def parseMediaCategory_update(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 1)]
-		typeID = stripper[0]
-		newType = stripper[1]
+		mediaID = stripper[0]
+		newCategory = stripper[1].title()
 
 	except: # if there aren't enough parts
 		return False # returns false
-	return typeID, newType
+	return mediaID, newCategory
 
 def parseAdminCheckout(mediaInfo):
 	try:
@@ -300,6 +306,22 @@ def parseAdminCheckout(mediaInfo):
 	except: # if there aren't enough parts
 		return False # returns false
 	return mediaID, slackID
+
+def parseMyStuff(mediaInfo):
+	try:
+		result = "Here is my treasure that you're holding!\n\n"
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "ID {}:\t".format(y)
+				if x == 1:
+					result += """Title: "{}"\t""".format(y)
+				if x == 2:
+					result += "Time: {}\n".format(y)
+
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
 
 ##################################################################################################################################
 
@@ -330,6 +352,18 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command == "!insult":
 		# TODO generate a random Conan insult
+		return
+
+	#################
+	###   !help   ###
+	#################
+
+	if command == "!help".lower():
+		inChannelResponse(channel, cromHelp)
+		if adapter.isAdmin(aUser):
+			directResponse(aUser, adminHelp)
+			return
+		directResponse(aUser, publicHelp)
 		return
 
 	################
@@ -393,6 +427,19 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notDirect)
 		return
 
+	#######################
+	###   !myStuff   ###
+	#######################
+
+	if command == "!myStuff".lower():
+		if adapter.isDirect(channel):
+			allMedia = adapter.getMyStuff(aUser)
+			parsed = parseMyStuff(allMedia)
+			inChannelResponse(channel, parsed)
+			return
+		inChannelResponse(channel, notDirect)
+		return
+
 	#####################
 	###   !checkOut   ###
 	#####################
@@ -417,7 +464,7 @@ def handle_command(command, channel, aUser, tStamp):
 					return
 				inChannelResponse(channel, doesntExist)
 				return
-			inChannelResponse(channel, what)
+			inChannelResponse(channel, correctCheckOUT)
 			return
 		inChannelResponse(channel, notDirect)
 		return
@@ -447,7 +494,7 @@ def handle_command(command, channel, aUser, tStamp):
 					return
 				inChannelResponse(channel, doesntExist)
 				return
-			inChannelResponse(channel, what)
+			inChannelResponse(channel, correctCheckIN)
 			return
 		inChannelResponse(channel, notDirect)
 		return
@@ -591,6 +638,7 @@ def handle_command(command, channel, aUser, tStamp):
 	#########################
 	###   !addMediaType   ###
 	#########################
+	# Video Games, Card Games, Books, etc.
 
 	if command.startswith("!addMediaType".lower()):
 		if adapter.isAdmin(aUser):
@@ -613,6 +661,7 @@ def handle_command(command, channel, aUser, tStamp):
 	#############################
 	###   !addMediaCategory   ###
 	#############################
+	# Horror, Anime, Family, etc.
 
 	if command.startswith("!addMediaCategory".lower()):
 		if adapter.isAdmin(aUser):
@@ -681,6 +730,57 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
+	# TODO improve the below 2 functions to allow updates to the 
+	# type/category of a specific media item
+
+	################################
+	###   !updateMediacategory   ###
+	################################
+
+	# if command.startswith("!updateMediaCategory".lower()):
+	# 	if adapter.isAdmin(aUser):
+	# 		if adapter.isDirect(channel):
+	# 			mediaInfo = command[len("!updateMediacategory")+1:].strip()
+	# 			if mediaInfo:
+	# 				typeID, newType = parseMediaCategory_update(mediaInfo)
+	# 				newType = newType.title()
+	# 				sqlResult = adapter.update_MediaCategory(typeID, newType)
+	# 				if not sqlResult:
+	# 					inChannelResponse(channel, updateMediaCategory.format(typeID, newType))
+	# 					return
+	# 				inChannelResponse(channel, notFound3)
+	# 				return
+	# 			inChannelResponse(channel, what)
+	# 			return
+	# 		inChannelResponse(channel, notDirect)
+	# 		return
+	# 	inChannelResponse(channel, notAdmin)
+	# 	return
+
+	############################
+	###   !updateMediaType   ###
+	############################
+
+	# if command.startswith("!updateMediaType".lower()):
+	# 	if adapter.isAdmin(aUser):
+	# 		if adapter.isDirect(channel):
+	# 			mediaInfo = command[len("!updateMediaType")+1:].strip().title()
+	# 			if mediaInfo:
+	# 				typeID, newType = parseMediaType_update(mediaInfo)
+	# 				newType = newType.title()
+	# 				sqlResult = adapter.update_MediaType(typeID, newType)
+	# 				if not sqlResult:
+	# 					inChannelResponse(channel, updateMediaType.format(typeID, newType))
+	# 					return
+	# 				inChannelResponse(channel, notFound3)
+	# 				return
+	# 			inChannelResponse(channel, what)
+	# 			return
+	# 		inChannelResponse(channel, notDirect)
+	# 		return
+	# 	inChannelResponse(channel, notAdmin)
+	# 	return
+
 	##########################
 	###   !adminCheckOut   ###
 	##########################
@@ -723,9 +823,9 @@ def handle_command(command, channel, aUser, tStamp):
 				if someID:
 					exists = adapter.getFactByID(someID)
 					if exists != -1 and exists:
-						sqlResult = adapter.remove_Facts(someID)
+						sqlResult = adapter.Media_adminCheckIN(someID)
 						if not sqlResult:
-							inChannelResponse(channel, removeItem.format(exists)) ## TODO format checkIn!
+							inChannelResponse(channel, adminCheckIN.format(exists))
 							return
 						inChannelResponse(channel, notFound3)
 						return

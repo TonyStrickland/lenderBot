@@ -2,8 +2,7 @@ import databaseProvider as sql
 import sqlite3
 import datetime
 
-DATABASE = "data/lendingLibrary.db"
-# DATABASE = "lenderBot/data/lendingLibrary.db" # prod location
+DATABASE = "lenderBot/data/lendingLibrary.db" # prod location
 sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
 ##################################################
@@ -409,10 +408,31 @@ def format_Media_WhosGotIt():
 		ON m.ID = t.mediaID
     JOIN 
     Users as u
-		ON u.slackID = t.slackID;
+		ON u.slackID = t.slackID
+    ORDER BY m.ID ASC;
     """
 
     return sql.GET(cmd)
+
+def getMyStuff(SlackID):
+    cmd = """
+    SELECT t.MediaID
+    ,m.fullName
+    , t.checkOUT
+    FROM Transactions as t
+    JOIN Media as m
+        ON m.ID = t.mediaID
+    WHERE 
+        t. SlackID = '{}'
+        AND t.checkIN is null;
+    """.format(SlackID)
+
+    try:
+        fin = sql.GET(cmd)
+    except:
+        fin = "You haven't checked anything out!"
+
+    return fin
 
 ##############################
 ###   Transactions Table   ###
@@ -521,3 +541,14 @@ def Media_adminCheckOUT(mediaID, slackID):
     """.format(mediaID, slackID)
 
     return sql.EXEC(cmd)
+
+def popularity():
+    """
+    SELECT t.mediaID, COUNT(0) as HOWMANY
+    FROM Transactions as t
+    WHERE 
+    t.checkOUT IS NOT NULL
+    GROUP BY t.mediaID
+    ORDER BY COUNT(0) desc;
+    """
+    return
