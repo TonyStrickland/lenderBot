@@ -8,7 +8,7 @@ def EXEC(sqlCmd): # fetches data from the database
 		someCursor = MAIN_CONNECTION.cursor()
 		someCursor.execute(sqlCmd)
 		if someCursor.rowcount == 0:
-			return 9
+			return 3
 		MAIN_CONNECTION.commit() 
 
 		return 0

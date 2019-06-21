@@ -472,8 +472,9 @@ def Media_CheckIN(mediaID, slackID):
     CheckIN = datetime('now','localtime')
     WHERE
     MediaID = {0}
+    AND SlackID = '{1}'
     AND CheckIN is null;
-    """.format(mediaID)
+    """.format(mediaID, slackID)
 
     return sql.EXEC(cmd)
 

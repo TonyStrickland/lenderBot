@@ -94,8 +94,11 @@ tooManyOut = "You have taken too much of the hoard! You'll need to speak to Cura
 takeIt = """I'll let you borrow "{}" for a time."""
 bringIt = """I'm glad you brought "{}" back! I was beginning to think I would need to hunt you down!"""
 
-notTaken = """No one has borrowed "{}." Perhaps you should strike first, and take it!"""
+notTaken = """No one has borrowed "{}". Perhaps you should strike first, and take it!"""
 adminCheckOut = """Alright! I'll let {} borrow "{}" ... for a time."""
+
+notYou = """You didn't check out "{}"!"""
+noGreed = "Stop being greedy! You have borrowed enough of my hoard!"
 
 ############################################################################
 ############################################################################
@@ -191,9 +194,6 @@ def parseFact_select(mediaInfo):
 
 def sanitizeID(slackID):
 	return slackID.replace('<','').replace('>','').replace('@','').upper()
-
-def reconstituteName(slackID):
-	return "<{}>".format(slackID)
 
 def parseMedia_insert(mediaInfo):
 	try:
@@ -336,7 +336,7 @@ def handle_command(command, channel, aUser, tStamp):
 	###   !who   ###
 	################
 
-	if command == "!conan":
+	if command == "!who":
 		inChannelResponse(channel, conanTells)
 		directResponse(aUser, aboutConan)
 		return
@@ -404,6 +404,12 @@ def handle_command(command, channel, aUser, tStamp):
 				exists = adapter.getMediaNameByID(someID)
 				if exists != -1 and exists:
 					sqlResult = adapter.Media_CheckOUT(someID, aUser)
+					if sqlResult == 5:
+						inChannelResponse(channel, checkedOUT.format(exists))
+						return
+					if sqlResult == 4:
+						inChannelResponse(channel, noGreed)
+						return
 					if not sqlResult:
 						inChannelResponse(channel, takeIt.format(exists))
 						return
@@ -426,10 +432,14 @@ def handle_command(command, channel, aUser, tStamp):
 			if someID:
 				exists = adapter.getMediaNameByID(someID)
 				if exists != -1 and exists:
-					sqlResult = adapter.Media_CheckIN(someID) # TODO a check to make sure THEY took it last!!!!
+					sanatary = sanitizeID(aUser)
+					sqlResult = adapter.Media_CheckIN(someID, sanatary)
+					if sqlResult == 3:
+						inChannelResponse(channel, notYou.format(exists))
+						return
 					if sqlResult == 5:
-							inChannelResponse(channel, checkedOUT.format(exists))
-							return
+						inChannelResponse(channel, checkedOUT.format(exists))
+						return
 					if not sqlResult:
 						inChannelResponse(channel, bringIt.format(exists))
 						return
@@ -689,8 +699,7 @@ def handle_command(command, channel, aUser, tStamp):
 							inChannelResponse(channel, checkedOUT.format(exists))
 							return
 						if not sqlResult:
-							sName = reconstituteName(sID)
-							inChannelResponse(channel, adminCheckOut.format(sName, exists))
+							inChannelResponse(channel, adminCheckOut.format(sID.upper(), exists))
 							return
 						inChannelResponse(channel, doesntExist)
 						return
