@@ -1,3 +1,3 @@
-# slackbot-template
+# lenderBot
 
-This repo contains all of the generic tools needed to create a simple python based slackbot.
+We have a lending library with many items, that should be shared!

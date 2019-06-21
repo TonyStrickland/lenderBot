@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -11,6 +12,7 @@ __pycache__/
 
 # databases
 *.db
+*.db-journal
 
 .vscode/
 
@@ -32,6 +34,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.csv
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

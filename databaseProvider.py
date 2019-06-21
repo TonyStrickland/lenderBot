@@ -7,7 +7,8 @@ def EXEC(sqlCmd): # fetches data from the database
 	try:
 		someCursor = MAIN_CONNECTION.cursor()
 		someCursor.execute(sqlCmd)
-		someCursor.close()
+		if someCursor.rowcount == 0:
+			return 3
 		MAIN_CONNECTION.commit() 
 
 		return 0
@@ -21,6 +22,9 @@ def EXEC(sqlCmd): # fetches data from the database
 	except:
 		return 9
 
+	finally:
+		someCursor.close()
+
 def GET(sqlCmd):
 	try:
 		someCursor = MAIN_CONNECTION.cursor()
@@ -28,7 +32,7 @@ def GET(sqlCmd):
 		result = someCursor.fetchall()
 
 	except:
-		result = 9
+		return -1
 
 	finally:
 		someCursor.close()
@@ -40,6 +44,16 @@ def SELECT_ALL(tableName): # returns a list of lists
 		SELECT * 
 		FROM {0};
 	""".format(tableName)
+
+	return GET(cmd)
+
+def SIMPLE_SELECT(tableName, whereColumn, whereCondition): # returns a list of lists
+	cmd = """
+		SELECT * 
+			FROM {0}
+		WHERE
+			{1} = {2};
+	""".format(tableName, whereColumn, whereCondition)
 
 	return GET(cmd)
 
