@@ -106,6 +106,9 @@ noGreed = "Stop being greedy! You have borrowed enough of my hoard!"
 correctCheckOUT = "HA HA HA! That's wrong! Try !checkOUT[SPACE]##"
 correctCheckIN = "HA HA HA! That's wrong! Try !checkIN[SPACE]##"
 
+viewCategoryInfo = "Here is my available hoard that falls into the {} category!\n\n"
+viewTypeInfo = "Here is my available hoard that is played on the {} medium!\n\n"
+
 ############################################################################
 ############################################################################
 
@@ -312,6 +315,46 @@ def parseAdminCheckout(mediaInfo):
 		return False # returns false
 	return mediaID, slackID
 
+def parseViewMediaByCategory(mediaInfo):
+	try:
+		result = ""
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "ID {}:\t".format(y)
+				if x == 1:
+					result += """Title: "{}"\t""".format(y)
+				if x == 2:
+					result += """Category: "{}"\t""".format(y)
+				if x == 3:
+					result += """Medium: "{}" - """.format(y)
+				if x == 4:
+					result += "{}\n".format(y)
+					
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
+def parseViewMediaByType(mediaInfo):
+	try:
+		result = ""
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "ID {}:\t".format(y)
+				if x == 1:
+					result += """Title: "{}"\t""".format(y)
+				if x == 2:
+					result += """Category: "{}"\t""".format(y)
+				if x == 3:
+					result += """Medium: "{}" - """.format(y)
+				if x == 4:
+					result += "{}\n".format(y)
+					
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
 def parseMyStuff(mediaInfo):
 	try:
 		result = "Here is my treasure that you're holding!\n\n"
@@ -380,6 +423,10 @@ def handle_command(command, channel, aUser, tStamp):
 		directResponse(aUser, aboutConan)
 		return
 
+	###########################
+	###   DIRECT commands   ###
+	###########################
+
 	###############################
 	###   !allMediaCategories   ###
 	###############################
@@ -428,6 +475,42 @@ def handle_command(command, channel, aUser, tStamp):
 			allMedia = adapter.format_Media_Available()
 			parsed = parseMedia_select(allMedia)
 			inChannelResponse(channel, parsed)
+			return
+		inChannelResponse(channel, notDirect)
+		return
+
+	#########################
+	###   !viewCategory   ###
+	#########################
+
+	if command.startswith("!viewCategory".lower()):
+		if adapter.isDirect(channel):
+			mediaInfo = command[len("!viewCategory")+1:].strip().title()
+			sqlResult = adapter.getAvalableByCategory(mediaInfo)
+			if sqlResult:
+				parsed = parseViewMediaByCategory(sqlResult)
+				parsed = viewCategoryInfo.format(mediaInfo) + parsed
+				inChannelResponse(channel, parsed)
+				return
+			inChannelResponse(channel, what)
+			return
+		inChannelResponse(channel, notDirect)
+		return
+
+	#####################
+	###   !viewType   ###
+	#####################
+
+	if command.startswith("!viewType".lower()):
+		if adapter.isDirect(channel):
+			mediaInfo = command[len("!viewType")+1:].strip().title()
+			sqlResult = adapter.getAvalableByType(mediaInfo)
+			if sqlResult:
+				parsed = parseViewMediaByType(sqlResult)
+				parsed = viewTypeInfo.format(mediaInfo) + parsed
+				inChannelResponse(channel, parsed)
+				return
+			inChannelResponse(channel, what)
 			return
 		inChannelResponse(channel, notDirect)
 		return
