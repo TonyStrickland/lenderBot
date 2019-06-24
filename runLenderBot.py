@@ -106,6 +106,13 @@ noGreed = "Stop being greedy! You have borrowed enough of my hoard!"
 correctCheckOUT = "HA HA HA! That's wrong! Try !checkOUT[SPACE]##"
 correctCheckIN = "HA HA HA! That's wrong! Try !checkIN[SPACE]##"
 
+introduction1 = """COME ONE AND ALL!
+It is I! Conan the Librarian, the new Guardian over the Lending Library!
+I now manage the hoard, while the Curator, {}, will tend to the meanial paperwork and 
+general housekeeping. What does that mean? Read my {} and see how to interact with me!
+Almost everything that I do is in direct message, so do not muck up this channel,
+else I shall cleave thee in twain!""".format(CURATOR, publicHelp)
+
 ############################################################################
 ############################################################################
 
