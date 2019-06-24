@@ -514,6 +514,15 @@ def handle_command(command, channel, aUser, tStamp):
 	###   ADMIN commands   ###
 	##########################
 
+	##################
+	###   !intro   ###
+	##################
+	    
+	if command == "!intro":
+		if adapter.isAdmin(aUser):
+			inChannelResponse(channel, introduction1)
+		return
+
 	#####################
 	###   !allFacts   ###
 	#####################
