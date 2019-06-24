@@ -201,6 +201,9 @@ def parseFact_select(mediaInfo):
 def sanitizeID(slackID):
 	return slackID.replace('<','').replace('>','').replace('@','').upper()
 
+def reconstitueID(slackID):
+	return "<@{}>".format(slackID)
+
 def parseMedia_insert(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 4)]
@@ -240,8 +243,8 @@ def parseMedia_WhosGotIt(mediaInfo):
 		for item in mediaInfo:
 			theID = item[0]
 			theTitle = item[1]
-			theUser = item [2]
-			theTime = item [3]
+			theUser = reconstitueID(item[2])
+			theTime = item[3]
 
 			formatted = """ID {}: Title: "{}"\tUser: {}\tTime: {}""".format(theID, theTitle, theUser, theTime)
 			result += formatted + "\n"

@@ -441,7 +441,7 @@ def format_Media_WhosGotIt():
     SELECT 
     m.ID
     , m.FullName
-    , u.userName
+    , t.slackID
 	, t.checkOUT
     FROM Media as m JOIN
         (SELECT t.mediaID
