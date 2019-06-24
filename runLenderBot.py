@@ -503,7 +503,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 	if command.startswith("!viewType".lower()):
 		if adapter.isDirect(channel):
-			mediaInfo = command[len("!viewCategory")+1:].strip().title()
+			mediaInfo = command[len("!viewType")+1:].strip().title()
 			sqlResult = adapter.getAvalableByType(mediaInfo)
 			if sqlResult:
 				parsed = parseViewMediaByType(sqlResult)
