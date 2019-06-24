@@ -667,7 +667,7 @@ def returnAll(slackID):
     SET
     CheckIN = datetime('now','localtime')
     WHERE
-    SlackID = {0}
+    SlackID = '{0}'
     AND CheckIN is null;
     """.format(slackID)
 
