@@ -767,11 +767,11 @@ def handle_command(command, channel, aUser, tStamp):
 				mediaInfo = command[len("!updateMediaType")+1:].strip().title()
 				if mediaInfo:
 					mediaID, typeID = parseMediaType_update(mediaInfo)
-					sqlResult = adapter.update_MediaCategory(mediaID, typeID)
+					sqlResult = adapter.update_MediaType(mediaID, typeID)
 					if not sqlResult:
 						mName = adapter.getMediaNameByID(mediaID)
 						tName = adapter.getMediaTypeByID(typeID)
-						inChannelResponse(channel, updateMediaCategory.format(mName, tName))
+						inChannelResponse(channel, updateMediaType.format(mName, tName))
 						return
 					inChannelResponse(channel, notFound3)
 					return
