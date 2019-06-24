@@ -287,13 +287,25 @@ def select_MediaID(ID):
 
 def selectAll_Media():
     return sql.SELECT_ALL("Media")
-###########################################################################
-def update_MediaCategory(ID, desc):
-    return sql.SIMPLE_UPDATE("MediaCategory", "Name", "'{}'".format(desc), "ID", ID)
 
-def update_MediaType(ID, desc):
-    return sql.SIMPLE_UPDATE("MediaType", "Description", "'{}'".format(desc), "ID", ID)
-###########################################################################
+def update_MediaCategory(mediaID, categoryID):
+    cmd = """
+    UPDATE Media
+    SET MediaCategory = {}
+    WHERE ID = {};
+    """.format(categoryID, mediaID)
+
+    return sql.EXEC(cmd)
+
+def update_MediaType(mediaID, typeID):
+    cmd = """
+    UPDATE Media
+    SET MediaType = {}
+    WHERE ID = {};
+    """.format(typeID, mediaID)
+
+    return sql.EXEC(cmd)
+
 def getMediaNameByID(ID):
     result = """
     SELECT
