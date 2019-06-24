@@ -108,6 +108,7 @@ correctCheckIN = "HA HA HA! That's wrong! Try !checkIN[SPACE]##"
 
 viewCategoryInfo = "Here is my available hoard that falls into the {} category!\n\n"
 viewTypeInfo = "Here is my available hoard that is played on the {} medium!\n\n"
+allback = "I'll put back everything {} took from the hoard."
 
 ############################################################################
 ############################################################################
@@ -913,6 +914,32 @@ def handle_command(command, channel, aUser, tStamp):
 						sqlResult = adapter.Media_adminCheckIN(someID)
 						if not sqlResult:
 							inChannelResponse(channel, adminCheckIN.format(exists))
+							return
+						inChannelResponse(channel, notFound3)
+						return
+					inChannelResponse(channel, doesntExist)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
+	###################
+	###   !return   ###
+	###################
+
+	if command.startswith("!return".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				someID = command[len("!return")+1:].strip()
+				if someID:
+					sanatary = sanitizeID(someID)
+					exists = adapter.returnAll(sanatary)
+					if exists != -1 and exists:
+						if not sqlResult:
+							inChannelResponse(channel, allback.format(someID))
 							return
 						inChannelResponse(channel, notFound3)
 						return

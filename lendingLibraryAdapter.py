@@ -660,6 +660,19 @@ def Media_adminCheckOUT(mediaID, slackID):
 
     return sql.EXEC(cmd)
 
+def returnAll(slackID):
+    cmd = """
+    UPDATE 
+    Transactions
+    SET
+    CheckIN = datetime('now','localtime')
+    WHERE
+    SlackID = {0}
+    AND CheckIN is null;
+    """.format(slackID)
+
+    return sql.EXEC(cmd)
+
 def popularity():
     """
     SELECT t.mediaID, COUNT(0) as HOWMANY
