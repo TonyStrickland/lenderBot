@@ -62,8 +62,8 @@ CURATOR = "<@UC1LT08SX>" # Tony Strickland's ID
 
 adding = """I'll add "{}" to the hoard!"""
 
-updateMediaType = """MediaType ID {} will now be set to "{}" """
-updateMediaCategory = """MediaCategory ID {} will now be set to "{}" """
+updateMediaType = """ "{}" will now be provided on this format "{}" """
+updateMediaCategory = """ "{}" will now be categorized as "{}" """
 removeItem = """I'll make sure to throw "{}" to the wolves!"""
 
 notAdmin = "Only the powerful can use this command!"
@@ -201,6 +201,9 @@ def parseFact_select(mediaInfo):
 def sanitizeID(slackID):
 	return slackID.replace('<','').replace('>','').replace('@','').upper()
 
+def reconstitueID(slackID):
+	return "<@{}>".format(slackID)
+
 def parseMedia_insert(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 4)]
@@ -240,8 +243,8 @@ def parseMedia_WhosGotIt(mediaInfo):
 		for item in mediaInfo:
 			theID = item[0]
 			theTitle = item[1]
-			theUser = item [2]
-			theTime = item [3]
+			theUser = reconstitueID(item[2])
+			theTime = item[3]
 
 			formatted = """ID {}: Title: "{}"\tUser: {}\tTime: {}""".format(theID, theTitle, theUser, theTime)
 			result += formatted + "\n"
@@ -266,12 +269,13 @@ def parseMediaType_select(mediaInfo):
 def parseMediaType_update(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 1)]
-		typeID = stripper[0]
-		newType = stripper[1]
+		mediaID = stripper[0]
+		newCategoryName = stripper[1].title()
+		newCategoryID = adapter.get_MediaTypeID(newCategoryName)
 
 	except: # if there aren't enough parts
 		return False # returns false
-	return typeID, newType
+	return mediaID, newCategoryID
 
 def parseMediaCategory_select(mediaInfo):
 	try:
@@ -291,11 +295,12 @@ def parseMediaCategory_update(mediaInfo):
 	try:
 		stripper = [x.strip() for x in mediaInfo.split(',', 1)]
 		mediaID = stripper[0]
-		newCategory = stripper[1].title()
+		newCategoryName = stripper[1].title()
+		newCategoryID = adapter.get_MediaCategoryID(newCategoryName)
 
 	except: # if there aren't enough parts
 		return False # returns false
-	return mediaID, newCategory
+	return mediaID, newCategoryID
 
 def parseAdminCheckout(mediaInfo):
 	try:
@@ -730,56 +735,55 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
-	# TODO improve the below 2 functions to allow updates to the 
-	# type/category of a specific media item
-
 	################################
 	###   !updateMediacategory   ###
 	################################
 
-	# if command.startswith("!updateMediaCategory".lower()):
-	# 	if adapter.isAdmin(aUser):
-	# 		if adapter.isDirect(channel):
-	# 			mediaInfo = command[len("!updateMediacategory")+1:].strip()
-	# 			if mediaInfo:
-	# 				typeID, newType = parseMediaCategory_update(mediaInfo)
-	# 				newType = newType.title()
-	# 				sqlResult = adapter.update_MediaCategory(typeID, newType)
-	# 				if not sqlResult:
-	# 					inChannelResponse(channel, updateMediaCategory.format(typeID, newType))
-	# 					return
-	# 				inChannelResponse(channel, notFound3)
-	# 				return
-	# 			inChannelResponse(channel, what)
-	# 			return
-	# 		inChannelResponse(channel, notDirect)
-	# 		return
-	# 	inChannelResponse(channel, notAdmin)
-	# 	return
+	if command.startswith("!updateMediaCategory".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				mediaInfo = command[len("!updateMediacategory")+1:].strip()
+				if mediaInfo:
+					mediaID, categoryID = parseMediaCategory_update(mediaInfo)
+					sqlResult = adapter.update_MediaCategory(mediaID, categoryID)
+					if not sqlResult:
+						mName = adapter.getMediaNameByID(mediaID)
+						cName = adapter.getMediaCategoryByID(categoryID)
+						inChannelResponse(channel, updateMediaCategory.format(mName, cName))
+						return
+					inChannelResponse(channel, notFound3)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
 
 	############################
 	###   !updateMediaType   ###
 	############################
 
-	# if command.startswith("!updateMediaType".lower()):
-	# 	if adapter.isAdmin(aUser):
-	# 		if adapter.isDirect(channel):
-	# 			mediaInfo = command[len("!updateMediaType")+1:].strip().title()
-	# 			if mediaInfo:
-	# 				typeID, newType = parseMediaType_update(mediaInfo)
-	# 				newType = newType.title()
-	# 				sqlResult = adapter.update_MediaType(typeID, newType)
-	# 				if not sqlResult:
-	# 					inChannelResponse(channel, updateMediaType.format(typeID, newType))
-	# 					return
-	# 				inChannelResponse(channel, notFound3)
-	# 				return
-	# 			inChannelResponse(channel, what)
-	# 			return
-	# 		inChannelResponse(channel, notDirect)
-	# 		return
-	# 	inChannelResponse(channel, notAdmin)
-	# 	return
+	if command.startswith("!updateMediaType".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				mediaInfo = command[len("!updateMediaType")+1:].strip().title()
+				if mediaInfo:
+					mediaID, typeID = parseMediaType_update(mediaInfo)
+					sqlResult = adapter.update_MediaType(mediaID, typeID)
+					if not sqlResult:
+						mName = adapter.getMediaNameByID(mediaID)
+						tName = adapter.getMediaTypeByID(typeID)
+						inChannelResponse(channel, updateMediaType.format(mName, tName))
+						return
+					inChannelResponse(channel, notFound3)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
 
 	##########################
 	###   !adminCheckOut   ###
@@ -821,7 +825,7 @@ def handle_command(command, channel, aUser, tStamp):
 			if adapter.isDirect(channel):
 				someID = command[len("!adminCheckIn")+1:].strip()
 				if someID:
-					exists = adapter.getFactByID(someID)
+					exists = adapter.getMediaNameByID(someID)
 					if exists != -1 and exists:
 						sqlResult = adapter.Media_adminCheckIN(someID)
 						if not sqlResult:
