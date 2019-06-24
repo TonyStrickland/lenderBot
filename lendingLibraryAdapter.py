@@ -168,11 +168,25 @@ def insert_MediaType(newType):
 def remove_MediaType(ID):
     return sql.SIMPLE_DELETE("MediaType", "ID", ID)
 
-def update_MediaType(ID, desc):
-    return sql.SIMPLE_UPDATE("MediaType", "Description", "'{}'".format(desc), "ID", ID)
-
 def selectAll_MediaType():
     return sql.SELECT_ALL("MediaType")
+
+def getMediaTypeByID(ID):
+    result = """
+    SELECT
+        Description
+    FROM
+        MediaType
+    WHERE
+        ID = {0};
+    """.format(ID)
+
+    try:
+        fin = sql.GET(result)[0][0]
+    except:
+        fin = 0
+
+    return fin
 
 def get_MediaTypeID(mediaType):
     cmd = """
@@ -207,12 +221,26 @@ def insert_MediaCategory(newCategory):
 
 def remove_MediaCategory(ID):
     return sql.SIMPLE_DELETE("MediaCategory", "ID", ID)
-    
-def update_MediaCategory(ID, desc):
-    return sql.SIMPLE_UPDATE("MediaCategory", "Name", "'{}'".format(desc), "ID", ID)
 
 def selectAll_MediaCategory():
     return sql.SELECT_ALL("MediaCategory")
+
+def getMediaCategoryByID(ID):
+    result = """
+    SELECT
+        Name
+    FROM
+        MediaCategory
+    WHERE
+        ID = {0};
+    """.format(ID)
+
+    try:
+        fin = sql.GET(result)[0][0]
+    except:
+        fin = 0
+
+    return fin
 
 def get_MediaCategoryID(mediaType):
     cmd = """
@@ -259,7 +287,13 @@ def select_MediaID(ID):
 
 def selectAll_Media():
     return sql.SELECT_ALL("Media")
+###########################################################################
+def update_MediaCategory(ID, desc):
+    return sql.SIMPLE_UPDATE("MediaCategory", "Name", "'{}'".format(desc), "ID", ID)
 
+def update_MediaType(ID, desc):
+    return sql.SIMPLE_UPDATE("MediaType", "Description", "'{}'".format(desc), "ID", ID)
+###########################################################################
 def getMediaNameByID(ID):
     result = """
     SELECT
