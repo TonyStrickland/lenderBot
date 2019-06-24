@@ -460,6 +460,78 @@ def format_Media_WhosGotIt():
 
     return sql.GET(cmd)
 
+def getAvalableByCategory(mediaCategory):
+    pass
+    cmd = """
+    SELECT 
+    m.ID
+    , m.FullName
+    , mc.Name
+    , mt.Description
+    , CASE m.LongGame 
+        WHEN 1
+            THEN 'Long'
+            ELSE 'Short'
+        END as Length
+    FROM Media as m
+    JOIN 
+    MediaCategory as mc 
+        ON m.MediaCategory = mc.ID
+    , MediaType as mt 
+	    ON m.MediaType = mt.ID
+	WHERE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+            WHERE 
+                t.MediaID = m.ID
+                AND t.CheckIN is null
+            ) = 0
+			AND mc.Name like '{}';
+    """.format(mediaCategory)
+
+    try:
+        fin = sql.GET(cmd)
+    except:
+        fin = False
+
+    return fin
+
+def getAvalableByType(mediaType):
+    pass
+    cmd = """
+    SELECT 
+    m.ID
+    , m.FullName
+    , mc.Name
+    , mt.Description
+    , CASE m.LongGame 
+        WHEN 1
+            THEN 'Long'
+            ELSE 'Short'
+        END as Length
+    FROM Media as m
+    JOIN 
+    MediaCategory as mc 
+        ON m.MediaCategory = mc.ID
+    , MediaType as mt 
+	    ON m.MediaType = mt.ID
+	WHERE (
+        SELECT COUNT(0) as numberOut
+        FROM Transactions as t
+            WHERE 
+                t.MediaID = m.ID
+                AND t.CheckIN is null
+            ) = 0
+			AND mt.Description like '{}';
+    """.format(mediaType)
+
+    try:
+        fin = sql.GET(cmd)
+    except:
+        fin = False
+
+    return fin
+
 def getMyStuff(SlackID):
     cmd = """
     SELECT t.MediaID
