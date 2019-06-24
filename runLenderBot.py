@@ -938,10 +938,7 @@ def handle_command(command, channel, aUser, tStamp):
 					sanatary = sanitizeID(someID)
 					exists = adapter.returnAll(sanatary)
 					if exists != -1 and exists:
-						if not sqlResult:
-							inChannelResponse(channel, allback.format(someID))
-							return
-						inChannelResponse(channel, notFound3)
+						inChannelResponse(channel, allback.format(someID))
 						return
 					inChannelResponse(channel, doesntExist)
 					return
