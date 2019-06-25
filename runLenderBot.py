@@ -108,7 +108,7 @@ correctCheckIN = "HA HA HA! That's wrong! Try !checkIN[SPACE]##"
 
 viewCategoryInfo = "Here is my available hoard that falls into the {} category!\n\n"
 viewTypeInfo = "Here is my available hoard that is played on the {} medium!\n\n"
-allback = "I'll put back everything {} took from the hoard."
+allback = "Here's everything {} had borrowed:\n\n"
 
 ############################################################################
 ############################################################################
@@ -359,6 +359,22 @@ def parseViewMediaByType(mediaInfo):
 def parseMyStuff(mediaInfo):
 	try:
 		result = "Here is my treasure that you're holding!\n\n"
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "ID {}:\t".format(y)
+				if x == 1:
+					result += """Title: "{}"\t""".format(y)
+				if x == 2:
+					result += "Time: {}\n".format(y)
+
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
+def parseOtherStuff(mediaInfo):
+	try:
+		result = ""
 		for i in mediaInfo:
 			for x, y in enumerate(i):
 				if x == 0:
@@ -936,9 +952,18 @@ def handle_command(command, channel, aUser, tStamp):
 				someID = command[len("!return")+1:].strip()
 				if someID:
 					sanatary = sanitizeID(someID)
-					exists = adapter.returnAll(sanatary)
-					if not exists:
-						inChannelResponse(channel, allback.format(reconstitueID(sanatary)))
+					try:
+						borrowed = adapter.getMyStuff(sanatary)
+						exists = adapter.returnAll(sanatary)
+						formatted = parseOtherStuff(borrowed)
+
+						returnMsg = allback.format(reconstitueID(sanatary)) + formatted
+
+						if not exists:
+							inChannelResponse(channel, returnMsg)
+							return
+					except:
+						inChannelResponse(channel, what3)
 						return
 					inChannelResponse(channel, doesntExist)
 					return
