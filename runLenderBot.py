@@ -108,6 +108,7 @@ correctCheckIN = "HA HA HA! That's wrong! Try !checkIN[SPACE]##"
 
 viewCategoryInfo = "Here is my available hoard that falls into the {} category!\n\n"
 viewTypeInfo = "Here is my available hoard that is played on the {} medium!\n\n"
+allback = "Here's everything {} had borrowed:\n\n"
 
 ############################################################################
 ############################################################################
@@ -358,6 +359,22 @@ def parseViewMediaByType(mediaInfo):
 def parseMyStuff(mediaInfo):
 	try:
 		result = "Here is my treasure that you're holding!\n\n"
+		for i in mediaInfo:
+			for x, y in enumerate(i):
+				if x == 0:
+					result += "ID {}:\t".format(y)
+				if x == 1:
+					result += """Title: "{}"\t""".format(y)
+				if x == 2:
+					result += "Time: {}\n".format(y)
+
+	except: # if there aren't enough parts
+		return False # returns false
+	return result
+
+def parseOtherStuff(mediaInfo):
+	try:
+		result = ""
 		for i in mediaInfo:
 			for x, y in enumerate(i):
 				if x == 0:
@@ -925,6 +942,38 @@ def handle_command(command, channel, aUser, tStamp):
 		inChannelResponse(channel, notAdmin)
 		return
 
+	###################
+	###   !return   ###
+	###################
+
+	if command.startswith("!return".lower()):
+		if adapter.isAdmin(aUser):
+			if adapter.isDirect(channel):
+				someID = command[len("!return")+1:].strip()
+				if someID:
+					sanatary = sanitizeID(someID)
+					try:
+						borrowed = adapter.getMyStuff(sanatary)
+						exists = adapter.returnAll(sanatary)
+						formatted = parseOtherStuff(borrowed)
+
+						returnMsg = allback.format(reconstitueID(sanatary)) + formatted + "It needs to be put back.\n" + returnItem 
+
+						if not exists:
+							inChannelResponse(channel, returnMsg)
+							return
+					except:
+						inChannelResponse(channel, what3)
+						return
+					inChannelResponse(channel, doesntExist)
+					return
+				inChannelResponse(channel, what)
+				return
+			inChannelResponse(channel, notDirect)
+			return
+		inChannelResponse(channel, notAdmin)
+		return
+
 	######################
 	###   !whoTookIt   ###
 	######################
@@ -957,7 +1006,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 if __name__ == "__main__":
 	if slack_client.rtm_connect(with_team_state=False):
-		print("Lenderbot is running!")
+		# print("Lenderbot is running!")
 		# Read bot's user ID by calling Web API method `auth.test`
 		templateID = slack_client.api_call("auth.test")["user_id"]
 		while True:
@@ -971,4 +1020,4 @@ if __name__ == "__main__":
 		time.sleep(RTM_READ_DELAY)
 	else:
 		pass
-		print("Connection failed. Exception traceback printed above.")
+		# print("Connection failed. Exception traceback printed above.")
