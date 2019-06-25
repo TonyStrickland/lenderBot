@@ -957,7 +957,8 @@ def handle_command(command, channel, aUser, tStamp):
 						exists = adapter.returnAll(sanatary)
 						formatted = parseOtherStuff(borrowed)
 
-						returnMsg = allback.format(reconstitueID(sanatary)) + formatted
+						returnMsg = allback.format(reconstitueID(sanatary)) 
+						+ formatted + "It needs to be put back.\n" + returnItem 
 
 						if not exists:
 							inChannelResponse(channel, returnMsg)
