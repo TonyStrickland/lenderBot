@@ -1006,7 +1006,7 @@ def handle_command(command, channel, aUser, tStamp):
 
 if __name__ == "__main__":
 	if slack_client.rtm_connect(with_team_state=False):
-		print("Lenderbot is running!")
+		# print("Lenderbot is running!")
 		# Read bot's user ID by calling Web API method `auth.test`
 		templateID = slack_client.api_call("auth.test")["user_id"]
 		while True:
@@ -1020,4 +1020,4 @@ if __name__ == "__main__":
 		time.sleep(RTM_READ_DELAY)
 	else:
 		pass
-		print("Connection failed. Exception traceback printed above.")
+		# print("Connection failed. Exception traceback printed above.")
