@@ -5,19 +5,6 @@ import datetime
 DATABASE = "lenderBot/data/lendingLibrary.db" # prod location
 sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
-##################################################
-
-# Tony Strickland and I both need to be admins
-# List all items - show available, or not
-# list what's there - DONE
-# list what's not - who's got it
-# allow a checkout/checkin
-# add/remove items from the library - DONE
-# categories, types, genres, owner - DONE
-# Video games, card games, etc - DONE
-
-##################################################
-
 #######################
 ###   Users Table   ###
 #######################
