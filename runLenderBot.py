@@ -38,7 +38,7 @@ from slackclient import SlackClient
 ###   Get the slack token   ###
 ###############################
 
-de.MAIN_KEY = "lenderBot/data/lenderBot" # prod location
+de.MAIN_KEY = "/home/ubuntu/lenderBot/data/lenderBot" # prod location
 slack_client = SlackClient(de.getToken())
 
 ###############################

@@ -2,7 +2,7 @@ import databaseProvider as sql
 import sqlite3
 import datetime
 
-DATABASE = "lenderBot/data/lendingLibrary.db" # prod location
+DATABASE = "/home/ubuntu/lenderBot/data/lendingLibrary.db" # prod location
 sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
 #######################
