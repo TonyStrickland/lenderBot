@@ -5,12 +5,12 @@ class Command():
         self.name = name
         self.kwargs = kwargs
 
-    def ParsePayload(self, payLoad)
-        web_client = payLoad['web_client']
-        data = payLoad['data']
-        channel = data['channel']
-        text = data['text']
-        return web_client, data, channel, text
+def ParsePayload(payLoad):
+    web_client = payLoad['web_client']
+    data = payLoad['data']
+    channel = data['channel']
+    text = data['text']
+    return web_client, data, channel, text
 
 class SayHello(Command):
     def __init__(self):
@@ -31,16 +31,5 @@ class SayHello(Command):
                 message_args['thread_ts'] = thread_ts   
         web_client.chat_postMessage(**message_args)
 
-#untested code
-class Help(Command):
-    def __init__(self):
-        super().__init__(source = SayHello, method = self.help, name = "Help")
 
-    def help(self, payLoad):
-        inChannelResponse(channel, cromHelp)
-		if adapter.isAdmin(aUser):
-			directResponse(aUser, adminHelp)
-			return
-		directResponse(aUser, publicHelp)
-		return
 

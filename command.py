@@ -1,4 +1,3 @@
-
 import publicCommands
 
 commandList = []
@@ -7,7 +6,6 @@ commandList = []
 # Load public commands
 ###################### 
 
-commandList.append(publicCommands.Help())
 commandList.append(publicCommands.SayHello())
 
 def runCommand(payload):
