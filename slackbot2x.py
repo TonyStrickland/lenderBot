@@ -2,6 +2,7 @@ from slack import RTMClient, WebClient
 import command
 
 __self_user_id = '' # Bot's user ID here
+__slack_token = None # Bot's Slack token goes here...duh
 
 def __should_handle(user=__self_user_id, text=''):
     return (user != __self_user_id
@@ -23,4 +24,4 @@ if __name__ == '__main__':
         rtm_client.start()
         
     main()
-    
+
