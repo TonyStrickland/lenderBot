@@ -1,5 +1,6 @@
-from slack import RTMClient, WebClient
 import command
+
+from slack import RTMClient, WebClient
 
 __self_user_id = '' # Bot's user ID here
 __slack_token = None # Bot's Slack token goes here...duh
