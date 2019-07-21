@@ -1,5 +1,5 @@
 import command
-
+import decode as de
 from slack import RTMClient, WebClient
 
 ##############################
@@ -7,7 +7,23 @@ from slack import RTMClient, WebClient
 ##############################
 
 __self_user_id = '' # Bot's user ID here
-__slack_token = None # Bot's Slack token goes here...duh
+
+###############################
+###   Get the slack token   ###
+###############################
+
+de.MAIN_KEY = "lenderBot/data/lenderBot" # prod location
+__slack_token = de.getToken() # Bot's Slack token goes here...duh
+
+###############################
+###   End the slack token   ###
+###############################
+
+############################################################################
+############################################################################
+
+# lenderBot's user ID in Slack: value is assigned after the bot starts up
+templateID = None
 
 def __should_handle(user=__self_user_id, text=''):
     return (user != __self_user_id
