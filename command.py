@@ -1,14 +1,7 @@
 import publicCommands
-
+import adminCommands
 commandList = []
-
-######################
-# Load public commands
-###################### 
-
-#commandList.append(publicCommands.SayHello())
-#commandList.append(publicCommands.Help())
-commandList = publicCommands.published #+ privateCommands.published
+commandList = publicCommands.published + adminCommands.published
 
 def checkCommand(text, option):
     for name in option.name:

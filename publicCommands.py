@@ -1,16 +1,9 @@
-import lendingLibraryAdapter
+from slackUtils import Command
 import slackUtils
 import lendingLibraryAdapter as adapter
 import comments
 
 published = []
-
-class Command():
-    def __init__(self, source, method, name, **kwargs):
-        self.method = method
-        self.source = source
-        self.name = name
-        self.kwargs = kwargs
 
 def ParsePayload(payLoad):
     web_client = payLoad['web_client']
@@ -19,27 +12,6 @@ def ParsePayload(payLoad):
     user = data['user']
     text = data['text']
     return web_client, data, channel, user, text
-
-class SayHello(Command):
-    def __init__(self):
-        super().__init__(source = SayHello, method = self.say_hello, name = ["Hello", 'h'])
-
-    def say_hello(self, payLoad):
-        thread_ts = None
-        client, data, channel, user, text = ParsePayload(payLoad)
-        if 'thread_ts' in payLoad:
-            thread_ts = payLoad['thread_ts']
-        if client is not None and len(text) > 0:
-            message_args = {
-                'channel' : channel,
-                'text' : 'Hello!',
-                'as_user' : True
-            }       
-            if thread_ts is not None:
-                message_args['thread_ts'] = thread_ts   
-        client.chat_postMessage(**message_args)
-
-published.append(SayHello())
 
 class Fact(Command):
     def __init__(self):
@@ -62,7 +34,9 @@ class Help(Command):
         super().__init__(source = Help, method = self.giveHelp, name = ['Help', '?'])
 
     def giveHelp(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        aUser = payLoad['data']['user']
         slackUtils.inChannelResponse(client, channel, comments.cromHelp)
         if adapter.isAdmin(aUser):
             slackUtils.directResponse(client, channel, aUser, comments.adminHelp)
@@ -76,18 +50,25 @@ class Who(Command):
         super().__init__(source = Who, method = self.tellWho, name = ['Who'])
 
     def tellWho(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        aUser = payLoad['data']['user']
         slackUtils.inChannelResponse(client, channel, comments.conanTells)  
         slackUtils.directResponse(client, channel, aUser, comments.aboutConan)
 
 published.append(Who())
+
+###########################
+###   DIRECT commands   ###
+###########################
 
 class AllMediaCategories(Command):
     def __init__(self):
         super().__init__(source = AllMediaCategories, method = self.tellAll, name = ['allMediaCategories', 'amc'])
 
     def tellAll(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
         if adapter.isDirect(channel):
             allCategory = adapter.selectAll_MediaCategory()
             parsed = slackUtils.parseMediaCategory_select(allCategory)
@@ -102,7 +83,8 @@ class AllMediaTypes(Command):
         super().__init__(source = AllMediaTypes, method = self.runAMT, name = ['AllMediaTypes', 'amt'])
 
     def runAMT(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
         if adapter.isDirect(channel):
             allCategory = adapter.selectAll_MediaType()
             parsed = slackUtils.parseMediaType_select(allCategory)
@@ -117,7 +99,8 @@ class Everything(Command):
         super().__init__(source = Everything, method = self.getEverything, name = ['Everything', 'all'])
 
     def getEverything(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']      
         if adapter.isDirect(channel):
             allMedia = adapter.format_Media()                
             parsed = slackUtils.parseMedia_select(allMedia)
@@ -132,7 +115,8 @@ class Avialable(Command):
         super().__init__(source = Avialable, method = self.getAvailable, name = ['Available'])
 
     def getAvailable(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
         if adapter.isDirect(channel):
             allMedia = adapter.format_Media_Available()                
             parsed = slackUtils.parseMedia_select(allMedia)
@@ -147,7 +131,9 @@ class ViewCategory(Command):
         super().__init__(source = ViewCategory, method = self.getByCategory, name = 'ViewCategory')
 
     def getByCategory(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        text = payLoad['data']['text']
         if adapter.isDirect(channel):
             args = text.split()
             if len(args) < 2:
@@ -169,7 +155,9 @@ class ViewType(Command):
         super().__init__(source = ViewType, method = self.getByType, name = 'ViewType')
 
     def getByType(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        text = payLoad['data']['text']
         if adapter.isDirect(channel):
             args = text.split()
             if len(args) < 2:
@@ -191,7 +179,9 @@ class MyStuff(Command):
         super().__init__(source = MyStuff, method = self.getMyStuff, name = ['MyStuff', 'Mine'])
 
     def getMyStuff(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        aUser = payLoad['data']['user']
         if adapter.isDirect(channel):
             allMedia = adapter.getMyStuff(aUser)
             parsed = slackUtils.parseMyStuff(allMedia)
@@ -206,7 +196,10 @@ class CheckOut(Command):
         super().__init__(source = CheckOut, method = self.doCheckout, name = ['CheckOut', 'CO'])
 
     def doCheckout(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        text = payLoad['data']['text']
+        aUser = payLoad['data']['user']
         if adapter.isDirect(channel):
             args = text.split()
             if len(args) < 2:
@@ -241,7 +234,10 @@ class CheckIn(Command):
         super().__init__(source = CheckIn, method = self.doCheckIn, name = ['CheckIn', 'CI'])
 
     def doCheckIn(self, payLoad):
-        client, data, channel, aUser, text = ParsePayload(payLoad)
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        text = payLoad['data']['text']
+        aUser = payLoad['data']['user']
         if adapter.isDirect(channel):
             args = text.split()
             if len(args) < 2:
