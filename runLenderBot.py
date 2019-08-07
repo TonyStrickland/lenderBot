@@ -13,7 +13,7 @@ __self_user_id = '' # Bot's user ID here
 ###############################
 
 de.MAIN_KEY = "/home/ubuntu/lenderBot/data/lenderBot" # prod location
-slack_client = SlackClient(de.getToken())
+__slack_token = de.getToken() 
 
 ###############################
 ###   End the slack token   ###
@@ -30,10 +30,9 @@ def __should_handle(user=__self_user_id, text=''):
         and len(text) is not 0)
 
 if __name__ == '__main__':
-    __slack_token = None # Bot's Slack token goes here...duh
+    
 
     def main():
- 
         @RTMClient.run_on(event='message')
         def handle(**kwargs):
             data = kwargs['data']   
