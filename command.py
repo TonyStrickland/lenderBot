@@ -4,8 +4,9 @@ commandList = []
 commandList = publicCommands.published + adminCommands.published
 
 def checkCommand(text, option):
+    check = text.split(' ')[0]
     for name in option.name:
-        if text.lower().startswith(name.lower()):
+        if check == name.lower():
             return True
     return False
 
@@ -19,5 +20,7 @@ def runCommand(payload):
                 option_method = getattr(option.source, option.method.__name__)
                 if option_method:
                     option.method(payload)
+                break
+                
 
 

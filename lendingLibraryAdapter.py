@@ -2,7 +2,9 @@ import databaseProvider as sql
 import sqlite3
 import datetime
 
-DATABASE = "/home/ubuntu/lenderBot/data/lendingLibrary.db" # prod location
+#testPath = "../lenderBot/data/lendingLibrary.db"
+DATABASE = "/home/ubuntu/lenderBot/data/lendingLibrary.db" # prod location 
+
 sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
 
 #######################
