@@ -37,21 +37,10 @@ def isAdmin(slackID):
     return fin
 
 def isDirect(channelID):
-    result = """
-    SELECT
-        *
-    FROM
-        Users
-    WHERE
-        directID = '{0}';
-    """.format(channelID)
-
-    try:
-        fin = sql.GET(result)[0][0]
-    except:
-        fin = 0
-
-    return fin
+	if channelID == "CKEMT7FV4":
+		return false
+	else:
+		return true
 
 def getSlackID(name):
     cmd = """
