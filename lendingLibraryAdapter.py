@@ -2,7 +2,7 @@ import databaseProvider as sql
 import sqlite3
 import datetime
 
-#testPath = "../lenderBot/data/lendingLibrary.db"
+#DATABASE = "lendingLibrary.db" #test path
 DATABASE = "/home/ubuntu/lenderBot/data/lendingLibrary.db" # prod location 
 
 sql.MAIN_CONNECTION = sqlite3.connect(DATABASE) # set DB connection
@@ -36,23 +36,12 @@ def isAdmin(slackID):
 
     return fin
 
-def isDirect(channelID):
-    result = """
-    SELECT
-        *
-    FROM
-        Users
-    WHERE
-        directID = '{0}';
-    """.format(channelID)
 
-    try:
-        fin = sql.GET(result)[0][0]
-    except:
-        fin = 0
-
-    return fin
-
+def isDirect(client, channelID):
+    con2 = client.conversations_info(channel=channelID)
+    conversation = client.conversations_info(channel=channelID).data
+    return conversation['channel']['is_im']
+    
 def getSlackID(name):
     cmd = """
         SELECT 

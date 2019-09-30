@@ -14,7 +14,7 @@ class AllFacts(Command):
         channel = payLoad['data']['channel']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 parsed = slackUtils.parseFact_select()
                 slackUtils.inChannelResponse(client, channel, parsed)
                 return
@@ -34,7 +34,7 @@ class AddFact(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if len(mediaInfo) > 10:
@@ -62,7 +62,7 @@ class RemoveFact(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 someID = text[len(args[0])+1:].strip()
                 if someID:
@@ -92,7 +92,7 @@ class AllInsults(Command):
         channel = payLoad['data']['channel']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 parsed = slackUtils.parseInsult_select()
                 slackUtils.inChannelResponse(client, channel, parsed)
                 return
@@ -112,7 +112,7 @@ class AddInsult(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if len(mediaInfo) > 10:
@@ -140,7 +140,7 @@ class RemoveInsult(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 someID = text[len(args[0])+1:].strip()
                 if someID:
@@ -171,7 +171,7 @@ class AddMediaType(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if len(mediaInfo) > 4 and len(mediaInfo) < 20:
@@ -199,7 +199,7 @@ class AddMediaCategory(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if len(mediaInfo) > 4 and len(mediaInfo) < 20:
@@ -227,7 +227,7 @@ class AddMedia(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
@@ -256,7 +256,7 @@ class RemoveMedia(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 someID = text[len(args[0])+1:].strip()
                 if someID:
@@ -287,7 +287,7 @@ class UpdateMediaCategory(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
@@ -318,7 +318,7 @@ class UpdateMediaType(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
@@ -349,7 +349,7 @@ class AdminCheckOut(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
@@ -383,7 +383,7 @@ class AdminCheckIn(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 someID = text[len(args[0])+1:].strip()
                 if someID:
@@ -415,7 +415,7 @@ class PutBack(Command):
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 args = text.split()
                 someID = text[len(args[0])+1:].strip()
                 if someID:
@@ -451,7 +451,7 @@ class WhoTookIt(Command):
         #text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 allMedia = adapter.format_Media_WhosGotIt()
                 parsed = slackUtils.parseMedia_WhosGotIt(allMedia)
                 slackUtils.inChannelResponse(client, channel, parsed)
@@ -474,7 +474,7 @@ class AdminTemplate(Command):
         #text = payLoad['data']['text']
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
-            if adapter.isDirect(channel):
+            if adapter.isDirect(client, channel):
                 #doStuff
                 return
             slackUtils.inChannelResponse(client, channel, comments.notDirect)

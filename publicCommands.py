@@ -69,7 +69,7 @@ class AllMediaCategories(Command):
     def tellAll(self, payLoad):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             allCategory = adapter.selectAll_MediaCategory()
             parsed = slackUtils.parseMediaCategory_select(allCategory)
             slackUtils.inChannelResponse(client, channel, parsed)
@@ -85,7 +85,7 @@ class AllMediaTypes(Command):
     def runAMT(self, payLoad):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client,channel):
             allCategory = adapter.selectAll_MediaType()
             parsed = slackUtils.parseMediaType_select(allCategory)
             slackUtils.inChannelResponse(client, channel, parsed)
@@ -101,7 +101,7 @@ class Everything(Command):
     def getEverything(self, payLoad):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']      
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             allMedia = adapter.format_Media()                
             parsed = slackUtils.parseMedia_select(allMedia)
             slackUtils.inChannelResponse(client, channel, parsed)
@@ -117,7 +117,7 @@ class Avialable(Command):
     def getAvailable(self, payLoad):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             allMedia = adapter.format_Media_Available()                
             parsed = slackUtils.parseMedia_select(allMedia)
             slackUtils.inChannelResponse(client, channel, parsed)
@@ -134,7 +134,7 @@ class ViewCategory(Command):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']
         text = payLoad['data']['text']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             args = text.split()
             if len(args) < 2:
                 slackUtils.inChannelResponse(client, channel, comments.badCommand)
@@ -158,7 +158,7 @@ class ViewType(Command):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']
         text = payLoad['data']['text']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             args = text.split()
             if len(args) < 2:
                 slackUtils.inChannelResponse(client, channel, comments.badCommand)
@@ -182,7 +182,7 @@ class MyStuff(Command):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']
         aUser = payLoad['data']['user']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             allMedia = adapter.getMyStuff(aUser)
             parsed = slackUtils.parseMyStuff(allMedia)
             slackUtils.inChannelResponse(client, channel, parsed)
@@ -200,7 +200,7 @@ class CheckOut(Command):
         channel = payLoad['data']['channel']
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             args = text.split()
             if len(args) < 2:
                 slackUtils.inChannelResponse(client, channel, comments.badCommand)
@@ -238,7 +238,7 @@ class CheckIn(Command):
         channel = payLoad['data']['channel']
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
-        if adapter.isDirect(channel):
+        if adapter.isDirect(client, channel):
             args = text.split()
             if len(args) < 2:
                 slackUtils.inChannelResponse(client, channel, comments.badCommand)
