@@ -1,10 +1,12 @@
 import sqlite3
 import numpy as np
 
-MAIN_CONNECTION = None
+#DATABASE = "lendingLibrary.db" #test path
+DATABASE = "/home/ubuntu/lenderBot/data/lendingLibrary.db" # prod location 
 
 def EXEC(sqlCmd): # fetches data from the database
 	try:
+		MAIN_CONNECTION = sqlite3.connect(DATABASE)
 		someCursor = MAIN_CONNECTION.cursor()
 		someCursor.execute(sqlCmd)
 		if someCursor.rowcount == 0:
@@ -27,6 +29,7 @@ def EXEC(sqlCmd): # fetches data from the database
 
 def GET(sqlCmd):
 	try:
+		MAIN_CONNECTION = sqlite3.connect(DATABASE)
 		someCursor = MAIN_CONNECTION.cursor()
 		someCursor.execute(sqlCmd)
 		result = someCursor.fetchall()
