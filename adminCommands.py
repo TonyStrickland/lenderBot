@@ -460,6 +460,8 @@ class WhoTookIt(Command):
             return
         slackUtils.inChannelResponse(client, channel, comments.notAdmin)
 
+published.append(WhoTookIt())
+
 ########################
 ###  Admin Template  ###
 ########################
