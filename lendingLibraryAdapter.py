@@ -33,9 +33,8 @@ def isAdmin(slackID):
 
     return fin
 
-
 def isDirect(client, channelID):
-    con2 = client.conversations_info(channel=channelID)
+    #con2 = client.conversations_info(channel=channelID)
     conversation = client.conversations_info(channel=channelID).data
     return conversation['channel']['is_im']
     
@@ -56,6 +55,23 @@ def getSlackID(name):
 
     return fin
 
+def getSlackName(id):
+    cmd = """
+        SELECT 
+            ID
+        FROM 
+            Users 
+        WHERE 
+            slackID LIKE '{0}'
+    """.format(id)
+
+    try:
+        fin = sql.GET(cmd)[0][0]
+    except:
+        fin = 'No ID'
+
+    return fin
+
 #######################
 ###   Facts Table   ###
 #######################
@@ -66,7 +82,7 @@ def getSlackID(name):
 # );
 
 def insert_Fact(newType):
-    return sql.SIMPLE_INSERT("Facts", "Line", "'{}'".format(newType))
+    return sql.SIMPLE_INSERT("Facts", "Line", "{}".format(newType))
 
 def selectAll_Facts():
     return sql.SELECT_ALL("Facts")
@@ -658,3 +674,22 @@ def popularity():
     ORDER BY COUNT(0) desc;
     """
     return
+
+def returnMedium(medium):
+    result = """
+    SELECT *
+    FROM
+        Media
+    WHERE
+        MediaType = {0};
+    """.format(medium)
+
+    try:
+        fin = sql.GET(result)
+    except:
+        fin = 0
+
+    return fin
+
+def addUser(user):
+    return sql.SIMPLE_INSERT("Users", "userName, slackID, IsAdmin", "'{0}', '{1}', '{2}'".format(user['name'], user['id'], '0'))

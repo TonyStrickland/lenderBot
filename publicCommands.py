@@ -200,6 +200,8 @@ class CheckOut(Command):
         channel = payLoad['data']['channel']
         text = payLoad['data']['text']
         aUser = payLoad['data']['user']
+        if adapter.getSlackName(aUser) == 'No ID':
+            adapter.addUser(client.users_info(user = aUser)['user'])
         if adapter.isDirect(client, channel):
             args = text.split()
             if len(args) < 2:
@@ -209,6 +211,7 @@ class CheckOut(Command):
             if someID:
                 exists = adapter.getMediaNameByID(someID)
                 if exists != -1 and exists:
+
                     sqlResult = adapter.Media_CheckOUT(someID, aUser)
                     if sqlResult == 5:
                         slackUtils.inChannelResponse(client, channel, comments.checkedOUT.format(exists))
@@ -266,4 +269,43 @@ class CheckIn(Command):
             return
         slackUtils.inChannelResponse(client, channel, comments.notDirect)
 
-published.append(CheckOut())
+published.append(CheckIn())
+
+class SearchMedium(Command):
+    def __init__(self):
+        super().__init__(source = SearchMedium, method = self.doLookup, name = ['SearchMedium', 'sm'])
+
+    def doLookup(self, payLoad):
+        client = payLoad['web_client']
+        channel = payLoad['data']['channel']
+        text = payLoad['data']['text']
+        aUser = payLoad['data']['user']
+        if adapter.isDirect(client, channel):
+            args = text.split()
+            if len(args) < 2:
+                slackUtils.inChannelResponse(client, channel, comments.badCommand)
+                return
+            medium = args[1].strip()
+            if medium:
+                exists = adapter.returnMedium(medium)
+                if exists != -1 and exists:
+                    sqlResult = adapter.returnMedium(medium)
+                    if sqlResult == 3:
+                        slackUtils.inChannelResponse(client, channel, comments.notYou.format(exists))
+                        return
+                    if sqlResult == 5:
+                        slackUtils.inChannelResponse(client, channel, comments.checkedOUT.format(exists))
+                        return
+                    if not sqlResult:
+                        slackUtils.inChannelResponse(client, channel, comments.bringIt.format(exists))
+                        return
+                    slackUtils.inChannelResponse(client, channel, comments.notFound2.format(exists))
+                    return
+                slackUtils.inChannelResponse(client, channel, comments.doesntExist)
+                return
+            slackUtils.inChannelResponse(client, channel, comments.correctCheckOUT)
+            return
+        slackUtils.inChannelResponse(client, channel, comments.notDirect)
+
+#Keeping disabled until testing completed
+#published.append(SearchMedium())
