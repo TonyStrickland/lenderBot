@@ -1,5 +1,6 @@
-import publicCommands
-import adminCommands
+from commands import publicCommands as publicCommands
+from commands import adminCommands as adminCommands
+
 commandList = []
 commandList = publicCommands.published + adminCommands.published
 

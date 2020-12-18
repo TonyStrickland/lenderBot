@@ -1,7 +1,9 @@
-from slackUtils import Command
-import slackUtils
-import lendingLibraryAdapter as adapter
-import comments
+
+import Conan.slackUtils as slackUtils
+from Conan.slackUtils import Command as Command
+import Conan..parseUtils as parseUtils
+import Conan.lendingLibraryAdapter as adapter
+import Conan.data.comments as comments
 
 published = []
 
@@ -71,7 +73,7 @@ class AllMediaCategories(Command):
         channel = payLoad['data']['channel']
         if adapter.isDirect(client, channel):
             allCategory = adapter.selectAll_MediaCategory()
-            parsed = slackUtils.parseMediaCategory_select(allCategory)
+            parsed = parseUtils.parseMediaCategory_select(allCategory)
             slackUtils.inChannelResponse(client, channel, parsed)
             return
         slackUtils.inChannelResponse(client, channel, comments.notDirect)
@@ -87,7 +89,7 @@ class AllMediaTypes(Command):
         channel = payLoad['data']['channel']
         if adapter.isDirect(client,channel):
             allCategory = adapter.selectAll_MediaType()
-            parsed = slackUtils.parseMediaType_select(allCategory)
+            parsed = parseUtils.parseMediaType_select(allCategory)
             slackUtils.inChannelResponse(client, channel, parsed)
             return
         slackUtils.inChannelResponse(client, channel, comments.notDirect)
@@ -103,7 +105,7 @@ class Everything(Command):
         channel = payLoad['data']['channel']      
         if adapter.isDirect(client, channel):
             allMedia = adapter.format_Media()                
-            parsed = slackUtils.parseMedia_select(allMedia)
+            parsed = parseUtils.parseMedia_select(allMedia)
             slackUtils.inChannelResponse(client, channel, parsed)
             return
         slackUtils.inChannelResponse(client, channel, comments.notDirect)
@@ -119,7 +121,7 @@ class Avialable(Command):
         channel = payLoad['data']['channel']
         if adapter.isDirect(client, channel):
             allMedia = adapter.format_Media_Available()                
-            parsed = slackUtils.parseMedia_select(allMedia)
+            parsed = parseUtils.parseMedia_select(allMedia)
             slackUtils.inChannelResponse(client, channel, parsed)
             return
         slackUtils.inChannelResponse(client, channel, comments.notDirect)
@@ -142,7 +144,7 @@ class ViewCategory(Command):
             mediaInfo = args[1].strip().title()
             sqlResult = adapter.getAvalableByCategory(mediaInfo)
             if sqlResult:
-                parsed = slackUtils.parseViewMediaByCategory(sqlResult)
+                parsed = parseUtils.parseViewMediaByCategory(sqlResult)
                 parsed = comments.viewCategoryInfo.format(mediaInfo) + parsed
             slackUtils.inChannelResponse(client, channel, parsed)
             return
@@ -166,7 +168,7 @@ class ViewType(Command):
             mediaInfo = args[1].strip().title()
             sqlResult = adapter.getAvalableByCategory(mediaInfo)
             if sqlResult:
-                parsed = slackUtils.parseViewMediaByCategory(sqlResult)
+                parsed = parseUtils.parseViewMediaByCategory(sqlResult)
                 parsed = comments.viewCategoryInfo.format(mediaInfo) + parsed
             slackUtils.inChannelResponse(client, channel, parsed)
             return
@@ -184,7 +186,7 @@ class MyStuff(Command):
         aUser = payLoad['data']['user']
         if adapter.isDirect(client, channel):
             allMedia = adapter.getMyStuff(aUser)
-            parsed = slackUtils.parseMyStuff(allMedia)
+            parsed = parseUtils.parseMyStuff(allMedia)
             slackUtils.inChannelResponse(client, channel, parsed)
             return
         slackUtils.inChannelResponse(client, channel, comments.notDirect)
@@ -250,7 +252,7 @@ class CheckIn(Command):
             if someID:
                 exists = adapter.getMediaNameByID(someID)
                 if exists != -1 and exists:
-                    sanatary = slackUtils.sanitizeID(aUser)
+                    sanatary = parseUtils.sanitizeID(aUser)
                     sqlResult = adapter.Media_CheckIN(someID, sanatary)
                     if sqlResult == 3:
                         slackUtils.inChannelResponse(client, channel, comments.notYou.format(exists))

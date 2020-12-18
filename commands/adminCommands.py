@@ -1,7 +1,9 @@
-from slackUtils import Command
-import slackUtils
-import lendingLibraryAdapter as adapter
-import comments
+
+import Conan.slackUtils as slackUtils
+from Conan.slackUtils import Command as Command
+import Conan..parseUtils as parseUtils
+import Conan..lendingLibraryAdapter as adapter
+import Conan..data.comments as comments
 
 published = []
 
@@ -15,7 +17,7 @@ class AllFacts(Command):
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
             if adapter.isDirect(client, channel):
-                parsed = slackUtils.parseFact_select()
+                parsed = parseUtils.parseFact_select()
                 slackUtils.inChannelResponse(client, channel, parsed)
                 return
             slackUtils.inChannelResponse(client, channel, comments.notDirect)
@@ -93,7 +95,7 @@ class AllInsults(Command):
         aUser = payLoad['data']['user']
         if adapter.isAdmin(aUser):
             if adapter.isDirect(client, channel):
-                parsed = slackUtils.parseInsult_select()
+                parsed = parseUtils.parseInsult_select()
                 slackUtils.inChannelResponse(client, channel, parsed)
                 return
             slackUtils.inChannelResponse(client, channel, comments.notDirect)
@@ -231,7 +233,7 @@ class AddMedia(Command):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
-                    parsed, mediaName = slackUtils.parseMedia_insert(mediaInfo)
+                    parsed, mediaName = parseUtils.parseMedia_insert(mediaInfo)
                     sqlResult = adapter.insert_Media(parsed)
                     if not sqlResult:
                         slackUtils.inChannelResponse(client, channel, comments.adding.format(mediaName))
@@ -291,7 +293,7 @@ class UpdateMediaCategory(Command):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
-                    mediaID, categoryID = slackUtils.parseMediaCategory_update(mediaInfo)
+                    mediaID, categoryID = parseUtils.parseMediaCategory_update(mediaInfo)
                     sqlResult = adapter.update_MediaCategory(mediaID, categoryID)
                     if not sqlResult:
                         mName = adapter.getMediaNameByID(mediaID)
@@ -322,7 +324,7 @@ class UpdateMediaType(Command):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
-                    mediaID, typeID = slackUtils.parseMediaType_update(mediaInfo)
+                    mediaID, typeID = parseUtils.parseMediaType_update(mediaInfo)
                     sqlResult = adapter.update_MediaType(mediaID, typeID)
                     if not sqlResult:
                         mName = adapter.getMediaNameByID(typeID)
@@ -353,10 +355,10 @@ class AdminCheckOut(Command):
                 args = text.split()
                 mediaInfo = text[len(args[0])+1:].strip().capitalize()
                 if mediaInfo:
-                    mID, sID = slackUtils.parseAdminCheckout(mediaInfo)
+                    mID, sID = parseUtils.parseAdminCheckout(mediaInfo)
                     exists = adapter.getMediaNameByID(mID)
                     if exists:
-                        sanitary = slackUtils.sanitizeID(sID)
+                        sanitary = parseUtils.sanitizeID(sID)
                         sqlResult = adapter.Media_adminCheckOUT(mID, sanitary)
                         if sqlResult == 5:
                             slackUtils.inChannelResponse(client, channel, comments.checkedOUT.format(exists))
@@ -419,13 +421,13 @@ class PutBack(Command):
                 args = text.split()
                 someID = text[len(args[0])+1:].strip()
                 if someID:
-                    sanitary = slackUtils.sanitizeID(someID)
+                    sanitary = parseUtils.sanitizeID(someID)
                     try:
-                        borrowed = adapater.getMyStuff(sanitary)
+                        borrowed = adapter.getMyStuff(sanitary)
                         exists = adapter.returnAll(sanitary)
-                        formatted = slackUtils.parseOtherStuff(borrowed)
+                        formatted = parseUtils.parseOtherStuff(borrowed)
                         if not exists:
-                            returnMsg = comments.allback.format(slackUtils.reconstitueID(sanitary)) + formatted + "It needs to be put back.\n" + comments.returnItem 
+                            returnMsg = comments.allback.format(parseUtils.reconstitueID(sanitary)) + formatted + "It needs to be put back.\n" + comments.returnItem 
                             slackUtils.inChannelResponse(client, channel, returnMsg)
                             return
                     except:
@@ -453,7 +455,7 @@ class WhoTookIt(Command):
         if adapter.isAdmin(aUser):
             if adapter.isDirect(client, channel):
                 allMedia = adapter.format_Media_WhosGotIt()
-                parsed = slackUtils.parseMedia_WhosGotIt(allMedia)
+                parsed = parseUtils.parseMedia_WhosGotIt(allMedia)
                 slackUtils.inChannelResponse(client, channel, parsed)
                 return
             slackUtils.inChannelResponse(client, channel, comments.notDirect)
