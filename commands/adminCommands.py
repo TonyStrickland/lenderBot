@@ -1,9 +1,9 @@
 
 import Conan.slackUtils as slackUtils
 from Conan.slackUtils import Command as Command
-import Conan..parseUtils as parseUtils
-import Conan..lendingLibraryAdapter as adapter
-import Conan..data.comments as comments
+import Conan.parseUtils as parseUtils
+import Conan.lendingLibraryAdapter as adapter
+import Conan.data.comments as comments
 
 published = []
 

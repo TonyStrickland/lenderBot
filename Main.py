@@ -3,8 +3,8 @@
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-import commandUtils
-import decode as de
+import Conan.commandUtils as commandUtils
+import Conan.decode as de
 from slack import RTMClient, WebClient
 
 ##############################
@@ -17,9 +17,9 @@ __self_user_id = '' # Bot's user ID here
 ###   Get the slack token   ###
 ###############################
 
-#de.MAIN_KEY = "/home/ubuntu/lenderBot/data/lenderBot" # prod location
-de.MAIN_KEY = "H:/Projects/lenderBot/Conan2" #test path
-#__slack_token = de.getToken() 
+#de.MAIN_KEY = "/home/pi/Slackbot/Conan/data/lenderBot" #prod location
+de.MAIN_KEY = "H:/Projects/lenderBot/Conan/data/lenderBot" #test path
+__slack_token = de.getToken() 
 
 
 ###############################

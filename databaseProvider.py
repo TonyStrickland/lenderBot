@@ -74,7 +74,7 @@ def VARIABLE_INSERT(tableName, amtOfColumns, vArgs):
 	if len(vArgs) % amtOfColumns != 0:
 		return 2
 
-	comma =","
+	#comma =","
 	argList = np.reshape(vArgs, (-1, amtOfColumns))
 
 	columnsToUse = ""

@@ -1,8 +1,6 @@
-import databaseProvider as sql
+import Conan.databaseProvider as sql
 import datetime
 import os
-
-
 
 #######################
 ###   Users Table   ###

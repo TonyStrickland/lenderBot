@@ -1,3 +1,5 @@
+data/lenderBot.key
+data/lenderbot.encrypted
 __pycache__/__init__.cpython-38.pyc
 __pycache__/command.cpython-38.pyc
 __pycache__/commandUtils.cpython-38.pyc
@@ -6,3 +8,6 @@ __pycache__/decode.cpython-38.pyc
 __pycache__/lendingLibraryAdapter.cpython-38.pyc
 __pycache__/parseUtils.cpython-38.pyc
 __pycache__/slackUtils.cpython-38.pyc
+commands/__pycache__/__init__.cpython-38.pyc
+commands/__pycache__/adminCommands.cpython-38.pyc
+commands/__pycache__/publicCommands.cpython-38.pyc

@@ -1,4 +1,4 @@
-import lendingLibraryAdapter as adapter
+import Conan.lendingLibraryAdapter as adapter
 
 def longGame(word):
     if word.lower() == "long":

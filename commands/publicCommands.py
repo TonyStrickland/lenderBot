@@ -281,7 +281,7 @@ class SearchMedium(Command):
         client = payLoad['web_client']
         channel = payLoad['data']['channel']
         text = payLoad['data']['text']
-        aUser = payLoad['data']['user']
+        #aUser = payLoad['data']['user']
         if adapter.isDirect(client, channel):
             args = text.split()
             if len(args) < 2:
