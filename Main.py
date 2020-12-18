@@ -20,7 +20,7 @@ __self_user_id = '' # Bot's user ID here
 #de.MAIN_KEY = "/home/ubuntu/lenderBot/data/lenderBot" # prod location
 de.MAIN_KEY = "H:/Projects/lenderBot/Conan2" #test path
 #__slack_token = de.getToken() 
-__slack_token = "xoxb-323434273830-677855329267-4sroZnLK3vlbOLQx8Q9aFKJm"
+
 
 ###############################
 ###   End the slack token   ###
